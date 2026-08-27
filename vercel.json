@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm --prefix dcis-guide/app install && npm --prefix dcis-guide/app run build",
+  "outputDirectory": "dcis-guide/app/dist",
+  "framework": "vite"
+}

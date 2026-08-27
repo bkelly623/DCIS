@@ -1,0 +1,11 @@
+{
+  "name": "dcis-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix dcis-guide/app run dev",
+    "build": "npm --prefix dcis-guide/app run build",
+    "preview": "npm --prefix dcis-guide/app run preview",
+    "validate:image": "node dcis-guide/app/scripts/validate-image.mjs"
+  }
+}
