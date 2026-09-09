@@ -1,366 +1,553 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
+  ArrowLeft,
+  ArrowRight,
   BadgeCheck,
-  Binoculars,
-  Camera,
-  ClipboardCheck,
-  Compass,
-  Database,
-  FileSearch,
-  Map,
-  Mic,
-  Send,
+  BookOpen,
+  Check,
+  ChevronRight,
+  ClipboardList,
+  Eye,
+  HelpCircle,
+  Home,
+  MapPinned,
+  Medal,
+  RotateCcw,
   Sparkles,
-  Wand2,
 } from "lucide-react";
-import { type ExhibitZone, workflows, zones } from "./data";
+import {
+  characters,
+  contentGaps,
+  paths,
+  rooms,
+  stops,
+  type Character,
+  type PathId,
+  type Stop,
+  type TourPath,
+} from "./data";
 import "./styles.css";
 
-type DraftRecord = {
-  id: string;
-  zoneId: string;
-  zoneName: string;
-  room: string;
-  note: string;
-  evidence: string[];
-  status: "draft" | "approved" | "private";
-  createdAt: string;
+type Phase = "choose-path" | "setup" | "tour" | "recap" | "staff";
+
+type Progress = {
+  teamName: string;
+  pathId: PathId;
+  characterId: Character["id"];
+  stopIndex: number;
+  completed: string[];
+  answers: Record<string, string>;
+  hinted: string[];
 };
 
+const STORAGE_KEY = "dcis-expedition-progress-v2";
+
 function App() {
-  const [activeZoneId, setActiveZoneId] = React.useState(zones[0].id);
-  const [activeView, setActiveView] = React.useState<"visitor" | "builder" | "review" | "map" | "validation">("visitor");
-  const [question, setQuestion] = React.useState("");
-  const [guideStyle, setGuideStyle] = React.useState("Curious docent");
-  const [drafts, setDrafts] = React.useState<DraftRecord[]>(() => {
-    const saved = window.localStorage.getItem("dcis-guide-drafts");
-    return saved ? JSON.parse(saved) as DraftRecord[] : [];
+  const [phase, setPhase] = React.useState<Phase>("choose-path");
+  const [selectedPathId, setSelectedPathId] = React.useState<PathId>("cabinet");
+  const [selectedCharacterId, setSelectedCharacterId] = React.useState<Character["id"]>("naturalist");
+  const [teamName, setTeamName] = React.useState("The Field Party");
+  const [progress, setProgress] = React.useState<Progress | null>(() => {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (!saved) return null;
+
+    try {
+      return JSON.parse(saved) as Progress;
+    } catch {
+      return null;
+    }
   });
-  const activeZone = zones.find((zone) => zone.id === activeZoneId) ?? zones[0];
 
   React.useEffect(() => {
-    window.localStorage.setItem("dcis-guide-drafts", JSON.stringify(drafts));
-  }, [drafts]);
+    if (progress) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    }
+  }, [progress]);
 
-  function createDraft(note: string) {
-    const trimmedNote = note.trim();
-    const draft: DraftRecord = {
-      id: crypto.randomUUID(),
-      zoneId: activeZone.id,
-      zoneName: activeZone.name,
-      room: activeZone.room,
-      note: trimmedNote || activeZone.shortGuide,
-      evidence: ["Seed museum image", "Staff note", "Map zone context"],
-      status: "draft",
-      createdAt: new Date().toISOString(),
+  const selectedPath = paths.find((path) => path.id === selectedPathId) ?? paths[0];
+  const selectedCharacter = characters.find((character) => character.id === selectedCharacterId) ?? characters[0];
+
+  function startTour() {
+    const nextProgress: Progress = {
+      teamName: teamName.trim() || "The Field Party",
+      pathId: selectedPath.id,
+      characterId: selectedCharacter.id,
+      stopIndex: 0,
+      completed: [],
+      answers: {},
+      hinted: [],
     };
 
-    setDrafts((current) => [draft, ...current]);
-    setActiveView("review");
+    setProgress(nextProgress);
+    setPhase("tour");
   }
 
-  function updateDraftStatus(id: string, status: DraftRecord["status"]) {
-    setDrafts((current) => current.map((draft) => draft.id === id ? { ...draft, status } : draft));
+  function continueSaved() {
+    if (progress) setPhase(progress.stopIndex >= getPathStops(progress.pathId).length ? "recap" : "tour");
+  }
+
+  function resetProgress() {
+    window.localStorage.removeItem(STORAGE_KEY);
+    setProgress(null);
+    setPhase("choose-path");
   }
 
   return (
-    <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">DC</div>
-          <div>
-            <h1>DCIS Guide</h1>
-            <p>Visitor adventure + staff builder</p>
-          </div>
-        </div>
-
-        <nav className="view-nav" aria-label="Prototype views">
-          <NavButton icon={<Camera />} label="Visitor Guide" active={activeView === "visitor"} onClick={() => setActiveView("visitor")} />
-          <NavButton icon={<Mic />} label="Builder Mode" active={activeView === "builder"} onClick={() => setActiveView("builder")} />
-          <NavButton icon={<ClipboardCheck />} label="Review Desk" active={activeView === "review"} onClick={() => setActiveView("review")} />
-          <NavButton icon={<Map />} label="Map Model" active={activeView === "map"} onClick={() => setActiveView("map")} />
-          <NavButton icon={<FileSearch />} label="Validation" active={activeView === "validation"} onClick={() => setActiveView("validation")} />
-        </nav>
-
-        <section className="zone-picker">
-          <h2>Pilot Stops</h2>
-          {zones.map((zone) => (
-            <button
-              className={zone.id === activeZone.id ? "zone-button active" : "zone-button"}
-              key={zone.id}
-              onClick={() => setActiveZoneId(zone.id)}
-            >
-              <span>{zone.name}</span>
-              <small>{zone.room}</small>
+    <main className="app">
+      <header className="topbar">
+        <button className="brand-button" onClick={() => setPhase("choose-path")} aria-label="Home">
+          <span className="brand-mark">DC</span>
+          <span>
+            <strong>DCIS Field Guide</strong>
+            <small>Delaware County Institute of Science</small>
+          </span>
+        </button>
+        <nav aria-label="App sections">
+          {progress && (
+            <button className="ghost-button" onClick={continueSaved}>
+              <BookOpen size={18} />
+              Continue
             </button>
-          ))}
-        </section>
-      </aside>
+          )}
+          <button className="ghost-button" onClick={() => setPhase("staff")}>
+            <ClipboardList size={18} />
+            Content
+          </button>
+        </nav>
+      </header>
 
-      <section className="workspace">
-        {activeView === "visitor" && (
-          <VisitorGuide
-            activeZone={activeZone}
-            guideStyle={guideStyle}
-            setGuideStyle={setGuideStyle}
-            question={question}
-            setQuestion={setQuestion}
-          />
-        )}
-        {activeView === "builder" && <BuilderMode activeZone={activeZone} draftCount={drafts.length} onCreateDraft={createDraft} />}
-        {activeView === "review" && <ReviewDesk drafts={drafts} onUpdateDraftStatus={updateDraftStatus} />}
-        {activeView === "map" && <MapModel activeZone={activeZone} setActiveZoneId={setActiveZoneId} />}
-        {activeView === "validation" && <ValidationPanel />}
-      </section>
+      {phase === "choose-path" && (
+        <PathPicker
+          selectedPathId={selectedPathId}
+          onSelectPath={(pathId) => {
+            setSelectedPathId(pathId);
+            setPhase("setup");
+          }}
+          onContinue={progress ? continueSaved : undefined}
+        />
+      )}
+
+      {phase === "setup" && (
+        <SetupFlow
+          path={selectedPath}
+          selectedCharacterId={selectedCharacterId}
+          teamName={teamName}
+          onBack={() => setPhase("choose-path")}
+          onTeamName={setTeamName}
+          onCharacter={setSelectedCharacterId}
+          onStart={startTour}
+        />
+      )}
+
+      {phase === "tour" && progress && (
+        <TourExperience
+          progress={progress}
+          onProgress={setProgress}
+          onFinish={() => setPhase("recap")}
+          onReset={resetProgress}
+        />
+      )}
+
+      {phase === "recap" && progress && (
+        <Recap progress={progress} onRestart={resetProgress} onChoosePath={() => setPhase("choose-path")} />
+      )}
+
+      {phase === "staff" && <StaffContent onBack={() => setPhase("choose-path")} />}
     </main>
   );
 }
 
-function NavButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button className={active ? "nav-button active" : "nav-button"} onClick={onClick}>
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
-}
-
-function VisitorGuide({
-  activeZone,
-  guideStyle,
-  setGuideStyle,
-  question,
-  setQuestion,
+function PathPicker({
+  selectedPathId,
+  onSelectPath,
+  onContinue,
 }: {
-  activeZone: ExhibitZone;
-  guideStyle: string;
-  setGuideStyle: (style: string) => void;
-  question: string;
-  setQuestion: (question: string) => void;
+  selectedPathId: PathId;
+  onSelectPath: (pathId: PathId) => void;
+  onContinue?: () => void;
 }) {
   return (
-    <div className="visitor-layout">
-      <section className="camera-stage" aria-label="Look-around view">
-        <img src={activeZone.asset} alt={activeZone.name} />
-        <div className="camera-overlay">
-          <span><Binoculars size={16} /> Looking at</span>
-          <strong>{activeZone.name}</strong>
-          <small>{activeZone.room} · zone confidence {Math.round(activeZone.confidence * 100)}%</small>
+    <section className="screen path-screen">
+      <div className="intro-band">
+        <div>
+          <p className="kicker"><Sparkles size={16} /> Pick an expedition</p>
+          <h1>Choose how the Institute should come alive.</h1>
+          <p>
+            Start in Mineral Hall, climb into the Lecture Hall, and let the third floor become the payoff.
+            The front hall stays what it is: a launch point, not fake content.
+          </p>
         </div>
-      </section>
-
-      <section className="guide-panel">
-        <div className="section-kicker"><Sparkles size={16} /> Visitor Guide</div>
-        <h2>{activeZone.name}</h2>
-        <p className="hook">{activeZone.hook}</p>
-
-        <div className="controls-row">
-          {["Curious docent", "Kid explorer", "Dramatic storyteller"].map((style) => (
-            <button
-              className={style === guideStyle ? "pill active" : "pill"}
-              key={style}
-              onClick={() => setGuideStyle(style)}
-            >
-              {style}
-            </button>
-          ))}
-        </div>
-
-        <article className="guide-answer">
-          <strong>{guideStyle}</strong>
-          <p>{activeZone.shortGuide}</p>
-        </article>
-
-        <div className="challenge">
-          <Compass size={18} />
-          <div>
-            <strong>Challenge</strong>
-            <p>{activeZone.challenge}</p>
-          </div>
-        </div>
-
-        <form className="ask-box" onSubmit={(event) => event.preventDefault()}>
-          <input
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask the guide something about this stop"
-            aria-label="Ask the guide"
-          />
-          <button title="Send question" type="submit">
-            <Send size={18} />
+        {onContinue && (
+          <button className="continue-card" onClick={onContinue}>
+            <BookOpen />
+            <span>
+              <strong>Continue active visit</strong>
+              <small>Resume the field notebook saved on this phone.</small>
+            </span>
+            <ChevronRight />
           </button>
-        </form>
+        )}
+      </div>
 
-        <button className="next-stop">
-          Next stop: {activeZone.nextStop}
-        </button>
-      </section>
-    </div>
-  );
-}
-
-function BuilderMode({
-  activeZone,
-  draftCount,
-  onCreateDraft,
-}: {
-  activeZone: ExhibitZone;
-  draftCount: number;
-  onCreateDraft: (note: string) => void;
-}) {
-  const [note, setNote] = React.useState("");
-
-  return (
-    <div className="panel-grid">
-      <section className="wide-panel">
-        <div className="section-kicker"><Mic size={16} /> Builder Mode</div>
-        <h2>Capture guide knowledge while walking the museum</h2>
-        <p className="muted">{draftCount} local draft records are waiting in this browser.</p>
-        <div className="capture-grid">
-          <button><Camera /> Capture photo</button>
-          <button><Mic /> Record narration</button>
-          <button onClick={() => onCreateDraft(note)}><Wand2 /> Create draft record</button>
-        </div>
-      </section>
-
-      <section className="work-panel">
-        <h3>Current Zone</h3>
-        <img className="thumb" src={activeZone.asset} alt={activeZone.name} />
-        <strong>{activeZone.name}</strong>
-        <p>{activeZone.room}</p>
-      </section>
-
-      <section className="work-panel">
-        <h3>Builder Notes</h3>
-        <ul className="plain-list">
-          {activeZone.builderNotes.map((note) => <li key={note}>{note}</li>)}
-        </ul>
-      </section>
-
-      <section className="wide-panel">
-        <h3>Draft Record Fields</h3>
-        <div className="field-grid">
-          <label>Room<input value={activeZone.room} readOnly /></label>
-          <label>Zone<input value={activeZone.name} readOnly /></label>
-          <label>Public status<input value="Draft until reviewed" readOnly /></label>
-          <label>Evidence<input value="Photo, OCR, staff note, map context" readOnly /></label>
-        </div>
-        <label className="note-field">
-          Staff walkthrough note
-          <textarea
-            value={note}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder="Type what a guide would say here, or leave blank to draft from the seed guide text."
-          />
-        </label>
-      </section>
-    </div>
-  );
-}
-
-function ReviewDesk({
-  drafts,
-  onUpdateDraftStatus,
-}: {
-  drafts: DraftRecord[];
-  onUpdateDraftStatus: (id: string, status: DraftRecord["status"]) => void;
-}) {
-  return (
-    <div className="panel-grid">
-      <section className="wide-panel">
-        <div className="section-kicker"><ClipboardCheck size={16} /> Review Desk</div>
-        <h2>Approve knowledge before it becomes public</h2>
-        <p className="muted">Builder records land here with sources, confidence, and failure notes before they become public guide content.</p>
-      </section>
-      {drafts.length > 0 && drafts.map((draft) => (
-        <section className="review-row" key={draft.id}>
-          <div>
-            <strong>{draft.zoneName}</strong>
-            <p>{draft.note}</p>
-            <small>{draft.room} · {draft.evidence.join(", ")}</small>
-          </div>
-          <span className={`status ${draft.status}`}>{draft.status}</span>
-          <div className="review-actions">
-            <button onClick={() => onUpdateDraftStatus(draft.id, "approved")}><BadgeCheck size={16} /> Approve</button>
-            <button>Edit</button>
-            <button onClick={() => onUpdateDraftStatus(draft.id, "private")}>Keep private</button>
-          </div>
-        </section>
-      ))}
-      {zones.map((zone) => (
-        <section className="review-row" key={zone.id}>
-          <div>
-            <strong>{zone.name}</strong>
-            <p>{zone.shortGuide}</p>
-            <small>Seed record from recovered prototype media</small>
-          </div>
-          <span className={`status ${zone.status}`}>{zone.status.replace("-", " ")}</span>
-          <div className="review-actions">
-            <button><BadgeCheck size={16} /> Approve</button>
-            <button>Edit</button>
-            <button>Keep private</button>
-          </div>
-        </section>
-      ))}
-    </div>
-  );
-}
-
-function MapModel({ activeZone, setActiveZoneId }: { activeZone: ExhibitZone; setActiveZoneId: (id: string) => void }) {
-  return (
-    <div className="map-layout">
-      <section>
-        <div className="section-kicker"><Map size={16} /> Museum Map Model</div>
-        <h2>Start rough, improve through use</h2>
-        <p className="muted">The blueprint model should locate floors, rooms, zones, cases, labels, landmarks, and paths with confidence scores.</p>
-        <div className="map-board">
-          {zones.map((zone, index) => (
+      <div className="path-grid">
+        {paths.map((path) => {
+          const Icon = path.icon;
+          const isSelected = path.id === selectedPathId;
+          return (
             <button
-              key={zone.id}
-              className={zone.id === activeZone.id ? "map-zone active" : "map-zone"}
-              style={{ gridColumn: `${(index % 2) + 1}`, gridRow: `${Math.floor(index / 2) + 1}` }}
-              onClick={() => setActiveZoneId(zone.id)}
+              key={path.id}
+              className={isSelected ? "path-card selected" : "path-card"}
+              style={{ "--accent": path.accent } as React.CSSProperties}
+              onClick={() => onSelectPath(path.id)}
             >
-              <strong>{zone.room}</strong>
-              <span>{zone.name}</span>
-              <small>{Math.round(zone.confidence * 100)}%</small>
+              <span className="path-icon"><Icon size={26} /></span>
+              <span className="path-meta">{path.time} · {path.difficulty}</span>
+              <strong>{path.name}</strong>
+              <em>{path.tagline}</em>
+              <span>{path.description}</span>
+              <small>{path.bestFor}</small>
             </button>
-          ))}
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function SetupFlow({
+  path,
+  selectedCharacterId,
+  teamName,
+  onBack,
+  onTeamName,
+  onCharacter,
+  onStart,
+}: {
+  path: TourPath;
+  selectedCharacterId: Character["id"];
+  teamName: string;
+  onBack: () => void;
+  onTeamName: (value: string) => void;
+  onCharacter: (id: Character["id"]) => void;
+  onStart: () => void;
+}) {
+  return (
+    <section className="screen setup-screen">
+      <button className="text-button" onClick={onBack}><ArrowLeft size={18} /> Back to paths</button>
+      <div className="setup-layout">
+        <aside className="mission-card" style={{ "--accent": path.accent } as React.CSSProperties}>
+          <span className="kicker"><path.icon size={16} /> {path.name}</span>
+          <h2>{path.opening}</h2>
+          <div className="mission-stats">
+            <span>{path.time}</span>
+            <span>{path.stopIds.length} discoveries</span>
+            <span>{path.difficulty}</span>
+          </div>
+        </aside>
+
+        <div className="setup-panel">
+          <label className="field-label">
+            Name your expedition
+            <input value={teamName} onChange={(event) => onTeamName(event.target.value)} />
+          </label>
+
+          <div>
+            <p className="section-title">Choose your field identity</p>
+            <div className="character-grid">
+              {characters.map((character) => {
+                const Icon = character.icon;
+                return (
+                  <button
+                    key={character.id}
+                    className={character.id === selectedCharacterId ? "character-card selected" : "character-card"}
+                    onClick={() => onCharacter(character.id)}
+                  >
+                    <Icon size={24} />
+                    <strong>{character.name}</strong>
+                    <span>{character.title}</span>
+                    <small>{character.flavor}</small>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <button className="primary-action" onClick={onStart}>
+            Begin expedition <ArrowRight size={20} />
+          </button>
         </div>
-      </section>
-      <section className="work-panel">
-        <h3>Selected Zone</h3>
-        <strong>{activeZone.name}</strong>
-        <p>{activeZone.hook}</p>
-        <div className="confidence-meter"><span style={{ width: `${activeZone.confidence * 100}%` }} /></div>
-      </section>
+      </div>
+    </section>
+  );
+}
+
+function TourExperience({
+  progress,
+  onProgress,
+  onFinish,
+  onReset,
+}: {
+  progress: Progress;
+  onProgress: (progress: Progress) => void;
+  onFinish: () => void;
+  onReset: () => void;
+}) {
+  const path = paths.find((candidate) => candidate.id === progress.pathId) ?? paths[0];
+  const character = characters.find((candidate) => candidate.id === progress.characterId) ?? characters[0];
+  const pathStops = getPathStops(path.id);
+  const stop = pathStops[Math.min(progress.stopIndex, pathStops.length - 1)];
+  const completedCount = progress.completed.length;
+  const hinted = progress.hinted.includes(stop.id);
+  const answered = progress.answers[stop.id];
+
+  function showHint() {
+    if (hinted) return;
+    onProgress({ ...progress, hinted: [...progress.hinted, stop.id] });
+  }
+
+  function answer(choice: string) {
+    onProgress({
+      ...progress,
+      answers: { ...progress.answers, [stop.id]: choice },
+      completed: progress.completed.includes(stop.id) ? progress.completed : [...progress.completed, stop.id],
+    });
+  }
+
+  function next() {
+    if (progress.stopIndex + 1 >= pathStops.length) {
+      onProgress({ ...progress, stopIndex: pathStops.length });
+      onFinish();
+      return;
+    }
+    onProgress({ ...progress, stopIndex: progress.stopIndex + 1 });
+  }
+
+  function previous() {
+    onProgress({ ...progress, stopIndex: Math.max(0, progress.stopIndex - 1) });
+  }
+
+  return (
+    <section className="tour-screen">
+      <div className="tour-header">
+        <button className="text-button" onClick={onReset}><RotateCcw size={17} /> Reset</button>
+        <div>
+          <strong>{path.name}</strong>
+          <small>{progress.teamName} · {character.name}</small>
+        </div>
+        <span className="progress-pill">{completedCount}/{pathStops.length}</span>
+      </div>
+
+      <div className="progress-track" aria-label="Tour progress">
+        <span style={{ width: `${(completedCount / pathStops.length) * 100}%` }} />
+      </div>
+
+      <div className="tour-layout">
+        <section className="stop-visual">
+          <img src={stop.asset} alt="" />
+          <div className="room-overlay">
+            <span>{stop.room}</span>
+            <strong>{stop.zone}</strong>
+            <small>{stop.duration} · {confidenceLabel(stop.confidence)}</small>
+          </div>
+        </section>
+
+        <section className="stop-panel">
+          <div className="stop-count">Discovery {progress.stopIndex + 1} of {pathStops.length}</div>
+          <h1>{stop.title}</h1>
+
+          <Instruction icon={<MapPinned />} label="Where to stand" text={stop.stand} />
+          <Instruction icon={<Eye />} label="Find" text={stop.find} />
+
+          <div className="choice-panel">
+            <p className="section-title">{stop.prompt}</p>
+            <div className="choice-grid">
+              {stop.choices.map((choice) => (
+                <button
+                  key={choice}
+                  className={answered === choice ? "choice selected" : "choice"}
+                  onClick={() => answer(choice)}
+                >
+                  {answered === choice && <Check size={16} />}
+                  {choice}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={hinted ? "hint-card visible" : "hint-card"}>
+            <button onClick={showHint}><HelpCircle size={18} /> {hinted ? "Hint revealed" : "Give me a hint"}</button>
+            {hinted && <p>{stop.hint}</p>}
+          </div>
+
+          {answered && (
+            <article className="reveal-card">
+              <div>
+                <BadgeCheck size={22} />
+                <span>Field note unlocked</span>
+              </div>
+              <h2>{stop.revealTitle}</h2>
+              <p>{stop.reveal}</p>
+              <strong>{stop.stamp}</strong>
+            </article>
+          )}
+
+          <div className="tour-actions">
+            <button className="secondary-action" onClick={previous} disabled={progress.stopIndex === 0}>
+              <ArrowLeft size={18} /> Previous
+            </button>
+            <button className="primary-action" onClick={next} disabled={!answered}>
+              {progress.stopIndex + 1 >= pathStops.length ? "Finish expedition" : "Next discovery"}
+              <ArrowRight size={18} />
+            </button>
+          </div>
+          <p className="next-cue">{stop.nextCue}</p>
+        </section>
+
+        <Notebook stops={pathStops} progress={progress} />
+      </div>
+    </section>
+  );
+}
+
+function Instruction({ icon, label, text }: { icon: React.ReactNode; label: string; text: string }) {
+  return (
+    <div className="instruction">
+      {icon}
+      <div>
+        <strong>{label}</strong>
+        <p>{text}</p>
+      </div>
     </div>
   );
 }
 
-function ValidationPanel() {
+function Notebook({ stops: pathStops, progress }: { stops: Stop[]; progress: Progress }) {
   return (
-    <div className="panel-grid">
-      <section className="wide-panel">
-        <div className="section-kicker"><FileSearch size={16} /> Real Validation Harness</div>
-        <h2>No fake AI claims</h2>
-        <p className="muted">These are the workflows to wire to real OCR, vision, and LLM calls using recovered DCIS media. Until a workflow runs, it is labeled honestly.</p>
-      </section>
-      {workflows.map((workflow) => (
-        <section className="validation-row" key={workflow.name}>
-          <Database size={22} />
-          <div>
-            <strong>{workflow.name}</strong>
-            <p><b>Input:</b> {workflow.input}</p>
-            <p><b>Target:</b> {workflow.target}</p>
-            <small>{workflow.reason}</small>
+    <aside className="notebook">
+      <div>
+        <BookOpen size={20} />
+        <strong>Field notebook</strong>
+      </div>
+      {pathStops.map((stop, index) => {
+        const Icon = stop.icon;
+        const done = progress.completed.includes(stop.id);
+        return (
+          <div key={stop.id} className={done ? "notebook-row done" : "notebook-row"}>
+            <Icon size={17} />
+            <span>{done ? stop.stamp : `Discovery ${index + 1}`}</span>
           </div>
-          <span className={`status ${workflow.status}`}>{workflow.status.replace("-", " ")}</span>
-        </section>
-      ))}
-    </div>
+        );
+      })}
+    </aside>
   );
+}
+
+function Recap({ progress, onRestart, onChoosePath }: { progress: Progress; onRestart: () => void; onChoosePath: () => void }) {
+  const path = paths.find((candidate) => candidate.id === progress.pathId) ?? paths[0];
+  const character = characters.find((candidate) => candidate.id === progress.characterId) ?? characters[0];
+  const pathStops = getPathStops(path.id);
+  const completedStops = pathStops.filter((stop) => progress.completed.includes(stop.id));
+  const title = titleFor(progress.completed.length, path.id);
+
+  return (
+    <section className="screen recap-screen">
+      <div className="recap-card" style={{ "--accent": path.accent } as React.CSSProperties}>
+        <Medal size={44} />
+        <p className="kicker">Expedition complete</p>
+        <h1>{title}</h1>
+        <p>{path.finale}</p>
+        <p>{character.recapLine}</p>
+        <div className="recap-stats">
+          <span><strong>{completedStops.length}</strong> discoveries</span>
+          <span><strong>{new Set(completedStops.map((stop) => stop.roomId)).size}</strong> rooms</span>
+          <span><strong>{progress.hinted.length}</strong> hints</span>
+        </div>
+      </div>
+
+      <div className="stamp-grid">
+        {completedStops.map((stop) => {
+          const Icon = stop.icon;
+          return (
+            <article key={stop.id} className="stamp-card">
+              <Icon size={22} />
+              <strong>{stop.stamp}</strong>
+              <span>{stop.revealTitle}</span>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="recap-actions">
+        <button className="primary-action" onClick={onChoosePath}>Try another path <ArrowRight size={18} /></button>
+        <button className="secondary-action" onClick={onRestart}>Clear saved visit</button>
+      </div>
+    </section>
+  );
+}
+
+function StaffContent({ onBack }: { onBack: () => void }) {
+  const roomCounts = Object.entries(rooms).map(([id, room]) => ({
+    id,
+    ...room,
+    stops: stops.filter((stop) => stop.roomId === id).length,
+  }));
+
+  return (
+    <section className="screen staff-screen">
+      <button className="text-button" onClick={onBack}><Home size={18} /> Back to visitor app</button>
+      <div className="intro-band compact">
+        <div>
+          <p className="kicker"><ClipboardList size={16} /> Content operating model</p>
+          <h1>Make the app beautiful now, map the building correctly next.</h1>
+          <p>
+            The prototype is intentionally content-driven. As Brendan builds the better physical map,
+            these stops can be swapped from seed zones to verified cases without redesigning the visitor flow.
+          </p>
+        </div>
+      </div>
+
+      <div className="staff-grid">
+        {roomCounts.map((room) => (
+          <article className="staff-card" key={room.id}>
+            <strong>{room.name}</strong>
+            <span>{room.stops} seeded stops</span>
+            <p>{room.role}</p>
+            <small>{room.note}</small>
+          </article>
+        ))}
+      </div>
+
+      <div className="gap-list">
+        {contentGaps.map((gap) => (
+          <article className="gap-row" key={gap.area}>
+            <strong>{gap.area}</strong>
+            <p>{gap.needed}</p>
+            <small>{gap.why}</small>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function getPathStops(pathId: PathId) {
+  const path = paths.find((candidate) => candidate.id === pathId) ?? paths[0];
+  return path.stopIds
+    .map((stopId) => stops.find((stop) => stop.id === stopId))
+    .filter((stop): stop is Stop => Boolean(stop));
+}
+
+function confidenceLabel(confidence: Stop["confidence"]) {
+  if (confidence === "ready") return "route verified";
+  if (confidence === "seed") return "seed content";
+  return "awaiting photo index";
+}
+
+function titleFor(completed: number, pathId: PathId) {
+  if (pathId === "hidden") return completed >= 5 ? "Institute Decoder" : "Archive Apprentice";
+  if (pathId === "safari") return completed >= 6 ? "Specimen Safari Champion" : "Cabinet Scout";
+  return completed >= 8 ? "Cabinet Detective" : "Field Observer";
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
