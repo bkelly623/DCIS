@@ -29,7 +29,7 @@ import {
 } from "./data";
 import "./styles.css";
 
-type Phase = "choose-path" | "setup" | "tour" | "recap" | "staff";
+type Phase = "choose-path" | "setup" | "tour" | "recap" | "map" | "staff";
 
 type Progress = {
   teamName: string;
@@ -114,12 +114,17 @@ function App() {
             <ClipboardList size={18} />
             Content
           </button>
+          <button className="ghost-button" onClick={() => setPhase("map")}>
+            <MapPinned size={18} />
+            Map
+          </button>
         </nav>
       </header>
 
       {phase === "choose-path" && (
         <PathPicker
           selectedPathId={selectedPathId}
+          onOpenMap={() => setPhase("map")}
           onSelectPath={(pathId) => {
             setSelectedPathId(pathId);
             setPhase("setup");
@@ -153,6 +158,8 @@ function App() {
         <Recap progress={progress} onRestart={resetProgress} onChoosePath={() => setPhase("choose-path")} />
       )}
 
+      {phase === "map" && <MineralHallMap onBack={() => setPhase("choose-path")} />}
+
       {phase === "staff" && <StaffContent onBack={() => setPhase("choose-path")} />}
     </main>
   );
@@ -160,10 +167,12 @@ function App() {
 
 function PathPicker({
   selectedPathId,
+  onOpenMap,
   onSelectPath,
   onContinue,
 }: {
   selectedPathId: PathId;
+  onOpenMap: () => void;
   onSelectPath: (pathId: PathId) => void;
   onContinue?: () => void;
 }) {
@@ -184,6 +193,16 @@ function PathPicker({
             <span>
               <strong>Continue active visit</strong>
               <small>Resume the field notebook saved on this phone.</small>
+            </span>
+            <ChevronRight />
+          </button>
+        )}
+        {!onContinue && (
+          <button className="continue-card map-launch-card" onClick={onOpenMap}>
+            <MapPinned />
+            <span>
+              <strong>Open Mineral Hall map</strong>
+              <small>See the numbered case layout, doors, windows, and island cases.</small>
             </span>
             <ChevronRight />
           </button>
@@ -481,6 +500,115 @@ function Recap({ progress, onRestart, onChoosePath }: { progress: Progress; onRe
       <div className="recap-actions">
         <button className="primary-action" onClick={onChoosePath}>Try another path <ArrowRight size={18} /></button>
         <button className="secondary-action" onClick={onRestart}>Clear saved visit</button>
+      </div>
+    </section>
+  );
+}
+
+type MineralMapItem = {
+  id: string;
+  label: string;
+  summary: string;
+  status: "matched" | "located" | "partial";
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+};
+
+const mineralMapItems: MineralMapItem[] = [
+  { id: "shells", label: "Shells", summary: "Shells, fossils, and take-home material at the Mineral Hall entrance.", status: "matched", x: 360, y: 755, width: 94, height: 36 },
+  { id: "1", label: "1 Pennsylvania", summary: "Minerals from Pennsylvania, the first vertical-run case above the shells.", status: "matched", x: 390, y: 655, width: 128, height: 44 },
+  { id: "2", label: "2 World-Wide", summary: "Minerals from World-Wide, the next vertical-run case.", status: "matched", x: 390, y: 550, width: 128, height: 44 },
+  { id: "3", label: "3 Mixed case", summary: "Inner-turn mineral case. Photo exists, but individual labels are not safely readable yet.", status: "partial", x: 500, y: 458, width: 130, height: 44 },
+  { id: "4", label: "4 Fluorescent", summary: "Special fluorescent/lighted case, visible as Branegan Cabinet C.", status: "matched", x: 315, y: 462, width: 132, height: 44 },
+  { id: "5", label: "5 Reynolds", summary: "Standalone D. Richard Reynolds mineral cabinet on the left wall.", status: "matched", x: 92, y: 405, width: 112, height: 54 },
+  { id: "6", label: "6 Collection", summary: "Back-wall collection case with portrait/plaque. Plaque spelling still needs confirmation.", status: "matched", x: 178, y: 325, width: 142, height: 44 },
+  { id: "7", label: "7 Back wall", summary: "Back-wall case between 6 and 8. Location known; contents still need a unique photo match.", status: "located", x: 328, y: 325, width: 112, height: 44 },
+  { id: "8", label: "8 Back wall", summary: "Back-wall case between 7 and 9. Location known; contents still need a unique photo match.", status: "located", x: 448, y: 325, width: 112, height: 44 },
+  { id: "9", label: "9 Back wall", summary: "Last back-wall case before the corner door.", status: "located", x: 568, y: 325, width: 112, height: 44 },
+  { id: "10", label: "10 Window sill", summary: "First right-wall window-sill mineral display; includes large specimens such as smoky quartz and barite on fluorite.", status: "matched", x: 700, y: 435, width: 128, height: 44 },
+  { id: "11", label: "11 Wall", summary: "Wall-level display between the first and second windows.", status: "located", x: 670, y: 590, width: 94, height: 40 },
+  { id: "12", label: "12 Ground", summary: "Ground-level display in the same between-window bay as 11.", status: "located", x: 782, y: 590, width: 104, height: 40 },
+  { id: "13", label: "13 Window sill", summary: "Second right-wall window-sill mineral display.", status: "located", x: 700, y: 740, width: 128, height: 44 },
+  { id: "14", label: "14 Ground", summary: "Ground-level display between the second and third windows.", status: "located", x: 668, y: 888, width: 104, height: 40 },
+  { id: "15", label: "15 Wall", summary: "Wall-level display between the second and third windows.", status: "located", x: 788, y: 888, width: 94, height: 40 },
+  { id: "16", label: "16 Window sill", summary: "Third right-wall window-sill mineral display.", status: "located", x: 700, y: 1000, width: 128, height: 44 },
+  { id: "17", label: "17 Corner side", summary: "Tucked to the right of the last window.", status: "located", x: 774, y: 1126, width: 112, height: 42 },
+  { id: "18", label: "18 Corner", summary: "Corner case along the bottom-right run.", status: "located", x: 656, y: 1126, width: 96, height: 42 },
+  { id: "19", label: "19 Near door", summary: "Case closer to the bottom door.", status: "located", x: 528, y: 1126, width: 108, height: 42 },
+];
+
+function MineralHallMap({ onBack }: { onBack: () => void }) {
+  const [selectedId, setSelectedId] = React.useState("1");
+  const selected = mineralMapItems.find((item) => item.id === selectedId) ?? mineralMapItems[0];
+
+  return (
+    <section className="screen map-screen">
+      <button className="text-button" onClick={onBack}><Home size={18} /> Back to visitor app</button>
+      <div className="intro-band compact">
+        <div>
+          <p className="kicker"><MapPinned size={16} /> Mineral Hall map</p>
+          <h1>Walk the room by numbered cases.</h1>
+          <p>
+            This is the first app-native map surface: public visitor geometry, doors, windows, island cases,
+            and the current numbered Mineral Hall case sequence.
+          </p>
+        </div>
+      </div>
+
+      <div className="map-layout">
+        <div className="map-board" aria-label="Mineral Hall numbered exhibit map">
+          <svg viewBox="0 0 980 1280" role="img" aria-labelledby="mineral-map-title mineral-map-desc">
+            <title id="mineral-map-title">Mineral Hall numbered map</title>
+            <desc id="mineral-map-desc">Sketch-faithful public Mineral Hall map with doors, windows, island cases, shells, and cases 1 through 19.</desc>
+            <path
+              className="map-room"
+              d="M350 1160 L350 1040 L305 1040 L305 780 L255 780 L255 610 L190 610 L190 515 L95 515 L95 390 L235 390 L235 245 L355 245 L355 80 L478 80 L478 160 L420 160 L420 345 L695 345 L695 310 L828 310 L828 345 L900 345 L900 1115 L804 1115 L804 1160 Z"
+            />
+            <rect className="map-door" x="300" y="975" width="62" height="92" />
+            <text className="map-marker-text" x="252" y="1025">entry door</text>
+            <rect className="map-door" x="695" y="318" width="132" height="42" />
+            <text className="map-marker-text" x="760" y="295">door</text>
+            <rect className="map-door" x="430" y="1128" width="160" height="50" />
+            <text className="map-marker-text" x="510" y="1208">door</text>
+            <rect className="map-window" x="850" y="420" width="58" height="118" />
+            <rect className="map-window" x="850" y="660" width="58" height="128" />
+            <rect className="map-window" x="850" y="910" width="58" height="126" />
+            <text className="map-marker-text" x="932" y="482">window</text>
+            <text className="map-marker-text" x="932" y="728">window</text>
+            <text className="map-marker-text" x="932" y="978">window</text>
+            <ellipse className="map-island" cx="620" cy="700" rx="70" ry="320" />
+            <text className="map-island-label" x="620" y="700">island cases</text>
+            {mineralMapItems.map((item) => (
+              <g
+                key={item.id}
+                className={`map-item ${item.status} ${item.id === selected.id ? "selected" : ""}`}
+                onClick={() => setSelectedId(item.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") setSelectedId(item.id);
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`${item.label}: ${item.summary}`}
+              >
+                <rect x={item.x} y={item.y} width={item.width ?? 110} height={item.height ?? 42} />
+                <text x={item.x + 10} y={item.y + 27}>{item.label}</text>
+              </g>
+            ))}
+          </svg>
+        </div>
+
+        <aside className="map-detail">
+          <span className={`status-dot ${selected.status}`}>{selected.status === "matched" ? "photo matched" : selected.status === "partial" ? "partial" : "location set"}</span>
+          <h2>{selected.label}</h2>
+          <p>{selected.summary}</p>
+          <div className="map-key">
+            <span><i className="matched" /> Photo/content matched</span>
+            <span><i className="partial" /> Partial identification</span>
+            <span><i className="located" /> Placed, needs unique content</span>
+          </div>
+        </aside>
       </div>
     </section>
   );
