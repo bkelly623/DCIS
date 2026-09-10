@@ -518,25 +518,25 @@ type MineralMapItem = {
 
 const mineralMapItems: MineralMapItem[] = [
   { id: "shells", label: "Shells", summary: "Shells, fossils, and take-home material at the Mineral Hall entrance.", status: "matched", x: 360, y: 755, width: 94, height: 36 },
-  { id: "1", label: "1 Pennsylvania", summary: "Minerals from Pennsylvania, the first vertical-run case above the shells.", status: "matched", x: 390, y: 655, width: 128, height: 44 },
-  { id: "2", label: "2 World-Wide", summary: "Minerals from World-Wide, the next vertical-run case.", status: "matched", x: 390, y: 550, width: 128, height: 44 },
-  { id: "3", label: "3 Mixed case", summary: "Inner-turn mineral case. Photo exists, but individual labels are not safely readable yet.", status: "partial", x: 500, y: 458, width: 130, height: 44 },
-  { id: "4", label: "4 Fluorescent", summary: "Special fluorescent/lighted case, visible as Branegan Cabinet C.", status: "matched", x: 315, y: 462, width: 132, height: 44 },
-  { id: "5", label: "5 Reynolds", summary: "Standalone D. Richard Reynolds mineral cabinet on the left wall.", status: "matched", x: 92, y: 405, width: 112, height: 54 },
-  { id: "6", label: "6 Collection", summary: "Back-wall collection case with portrait/plaque. Plaque spelling still needs confirmation.", status: "matched", x: 178, y: 325, width: 142, height: 44 },
-  { id: "7", label: "7 Back wall", summary: "Back-wall case between 6 and 8. Location known; contents still need a unique photo match.", status: "located", x: 328, y: 325, width: 112, height: 44 },
-  { id: "8", label: "8 Back wall", summary: "Back-wall case between 7 and 9. Location known; contents still need a unique photo match.", status: "located", x: 448, y: 325, width: 112, height: 44 },
-  { id: "9", label: "9 Back wall", summary: "Last back-wall case before the corner door.", status: "located", x: 568, y: 325, width: 112, height: 44 },
-  { id: "10", label: "10 Window sill", summary: "First right-wall window-sill mineral display; includes large specimens such as smoky quartz and barite on fluorite.", status: "matched", x: 700, y: 435, width: 128, height: 44 },
-  { id: "11", label: "11 Wall", summary: "Wall-level display between the first and second windows.", status: "located", x: 670, y: 590, width: 94, height: 40 },
-  { id: "12", label: "12 Ground", summary: "Ground-level display in the same between-window bay as 11.", status: "located", x: 782, y: 590, width: 104, height: 40 },
-  { id: "13", label: "13 Window sill", summary: "Second right-wall window-sill mineral display.", status: "located", x: 700, y: 740, width: 128, height: 44 },
-  { id: "14", label: "14 Ground", summary: "Ground-level display between the second and third windows.", status: "located", x: 668, y: 888, width: 104, height: 40 },
-  { id: "15", label: "15 Wall", summary: "Wall-level display between the second and third windows.", status: "located", x: 788, y: 888, width: 94, height: 40 },
-  { id: "16", label: "16 Window sill", summary: "Third right-wall window-sill mineral display.", status: "located", x: 700, y: 1000, width: 128, height: 44 },
-  { id: "17", label: "17 Corner side", summary: "Tucked to the right of the last window.", status: "located", x: 774, y: 1126, width: 112, height: 42 },
-  { id: "18", label: "18 Corner", summary: "Corner case along the bottom-right run.", status: "located", x: 656, y: 1126, width: 96, height: 42 },
-  { id: "19", label: "19 Near door", summary: "Case closer to the bottom door.", status: "located", x: 528, y: 1126, width: 108, height: 42 },
+  { id: "1", label: "1 Pennsylvania", summary: "Photo-confirmed case labeled Minerals from Pennsylvania. Case 3 is immediately to the right as the wall run turns.", status: "matched", x: 390, y: 655, width: 128, height: 44 },
+  { id: "2", label: "2 Map-only", summary: "Positioned from the numbered hand map, but not yet tied to a readable case photo in the KB.", status: "located", x: 390, y: 550, width: 128, height: 44 },
+  { id: "3", label: "3 Mixed case", summary: "Photo-confirmed case 3 on the adjacent wall of the L. Labels are visible but mostly not safely readable.", status: "partial", x: 500, y: 458, width: 130, height: 44 },
+  { id: "4", label: "4 Map-only", summary: "Positioned from the numbered hand map. Its object identity still needs a unique readable photo match.", status: "located", x: 315, y: 462, width: 132, height: 44 },
+  { id: "5", label: "5 Map-only", summary: "Positioned from the numbered hand map. Contents and case name still need photo confirmation.", status: "located", x: 92, y: 405, width: 112, height: 54 },
+  { id: "6", label: "6 Map-only", summary: "Back-wall case position from the numbered hand map. The contents still need a unique photo match.", status: "located", x: 178, y: 325, width: 142, height: 44 },
+  { id: "7", label: "7 Map-only", summary: "Back-wall case position from the numbered hand map. Contents still need a unique photo match.", status: "located", x: 328, y: 325, width: 112, height: 44 },
+  { id: "8", label: "8 Map-only", summary: "Back-wall case position from the numbered hand map. Contents still need a unique photo match.", status: "located", x: 448, y: 325, width: 112, height: 44 },
+  { id: "9", label: "9 Map-only", summary: "Back-wall case position from the numbered hand map, near the corner door.", status: "located", x: 568, y: 325, width: 112, height: 44 },
+  { id: "10", label: "10 Map-only", summary: "Right-wall/window-side position from the numbered hand map. Contents still need readable photo confirmation.", status: "located", x: 700, y: 435, width: 128, height: 44 },
+  { id: "11", label: "11 Map-only", summary: "Wall-level position from the numbered hand map.", status: "located", x: 670, y: 590, width: 94, height: 40 },
+  { id: "12", label: "12 Map-only", summary: "Ground-level position from the numbered hand map.", status: "located", x: 782, y: 590, width: 104, height: 40 },
+  { id: "13", label: "13 Map-only", summary: "Window-side position from the numbered hand map.", status: "located", x: 700, y: 740, width: 128, height: 44 },
+  { id: "14", label: "14 Map-only", summary: "Ground-level position from the numbered hand map.", status: "located", x: 668, y: 888, width: 104, height: 40 },
+  { id: "15", label: "15 Map-only", summary: "Wall-level position from the numbered hand map.", status: "located", x: 788, y: 888, width: 94, height: 40 },
+  { id: "16", label: "16 Map-only", summary: "Window-side position from the numbered hand map.", status: "located", x: 700, y: 1000, width: 128, height: 44 },
+  { id: "17", label: "17 Map-only", summary: "Corner-side position from the numbered hand map.", status: "located", x: 774, y: 1126, width: 112, height: 42 },
+  { id: "18", label: "18 Map-only", summary: "Corner case position from the numbered hand map.", status: "located", x: 656, y: 1126, width: 96, height: 42 },
+  { id: "19", label: "19 Map-only", summary: "Near-door case position from the numbered hand map.", status: "located", x: 528, y: 1126, width: 108, height: 42 },
 ];
 
 function MineralHallMap({ onBack }: { onBack: () => void }) {
@@ -549,10 +549,10 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
       <div className="intro-band compact">
         <div>
           <p className="kicker"><MapPinned size={16} /> Mineral Hall map</p>
-          <h1>Walk the room by numbered cases.</h1>
+          <h1>Follow the evidence case by case.</h1>
           <p>
-            This is the first app-native map surface: public visitor geometry, doors, windows, island cases,
-            and the current numbered Mineral Hall case sequence.
+            A public visitor map for Mineral Hall that separates photo-matched cases from positions still waiting
+            on clean exhibit photos.
           </p>
         </div>
       </div>
@@ -561,7 +561,7 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
         <div className="map-board" aria-label="Mineral Hall numbered exhibit map">
           <svg viewBox="0 0 980 1280" role="img" aria-labelledby="mineral-map-title mineral-map-desc">
             <title id="mineral-map-title">Mineral Hall numbered map</title>
-            <desc id="mineral-map-desc">Sketch-faithful public Mineral Hall map with doors, windows, island cases, shells, and cases 1 through 19.</desc>
+            <desc id="mineral-map-desc">Public Mineral Hall map with doors, windows, island cases, shells, and cases 1 through 19, using confidence states for photo-matched and map-only records.</desc>
             <path
               className="map-room"
               d="M350 1160 L350 1040 L305 1040 L305 780 L255 780 L255 610 L190 610 L190 515 L95 515 L95 390 L235 390 L235 245 L355 245 L355 80 L478 80 L478 160 L420 160 L420 345 L695 345 L695 310 L828 310 L828 345 L900 345 L900 1115 L804 1115 L804 1160 Z"
