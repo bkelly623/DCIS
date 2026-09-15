@@ -5,9 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "tsc && vite build",
+    "build": "npm run check:public && npm test && tsc && vite build && npm run check:bundle",
     "preview": "vite preview --host 0.0.0.0",
-    "validate:image": "node scripts/validate-image.mjs"
+    "validate:image": "node scripts/validate-image.mjs",
+    "export:public": "node scripts/export-public.mjs",
+    "check:public": "node scripts/export-public.mjs --check",
+    "test": "node --test tests/*.test.mjs",
+    "check:bundle": "node scripts/check-public-bundle.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.0.0",

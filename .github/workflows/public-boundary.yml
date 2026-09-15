@@ -1,0 +1,29 @@
+name: Public app boundary
+on:
+  pull_request:
+    paths: ['dcis-guide/app/**', '.github/workflows/public-boundary.yml']
+  push:
+    paths: ['dcis-guide/app/**', '.github/workflows/public-boundary.yml']
+permissions:
+  contents: read
+jobs:
+  public-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dcis-guide/app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: dcis-guide/app/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install playwright==1.63.0
+      - run: python -m playwright install --with-deps chromium
+      - run: python scripts/check-public-ui.py

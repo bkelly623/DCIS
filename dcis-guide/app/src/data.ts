@@ -50,7 +50,6 @@ export type Stop = {
   stamp: string;
   nextCue: string;
   tags: string[];
-  confidence: "seed" | "needs-photo-index" | "ready";
 };
 
 export type TourPath = {
@@ -78,28 +77,6 @@ export type Character = {
   recapLine: string;
 };
 
-export const rooms: Record<RoomId, { name: string; note: string; role: string }> = {
-  "mineral-hall": {
-    name: "Mineral Hall",
-    note: "The first content anchor: cases, color, crystal form, labels, maps, deep time.",
-    role: "Start here for object-hunt energy and fast visual rewards.",
-  },
-  "lecture-hall": {
-    name: "Lecture Hall",
-    note: "The emotional center: stage, portraits, public science, institutional continuity.",
-    role: "Use this room to make DCIS feel alive as a place, not just a collection.",
-  },
-  "third-floor": {
-    name: "Third Floor",
-    note: "The payoff: balcony route, birds, nests, insects, mammals, marine specimens, fossils.",
-    role: "Make this feel like opening the cabinet of wonders.",
-  },
-  "special-collections": {
-    name: "Special Collections",
-    note: "Selective use only until stronger item-level mapping exists.",
-    role: "Add mystery and archival texture without pretending full coverage.",
-  },
-};
 
 export const characters: Character[] = [
   {
@@ -174,7 +151,6 @@ export const stops: Stop[] = [
     stamp: "Crystal Logic",
     nextCue: "Stay in Mineral Hall. Shift from individual beauty to comparison.",
     tags: ["minerals", "deep-time", "observation"],
-    confidence: "needs-photo-index",
   },
   {
     id: "two-that-disagree",
@@ -197,7 +173,6 @@ export const stops: Stop[] = [
     stamp: "Comparative Eye",
     nextCue: "Look for a map, label, or place-reference nearby.",
     tags: ["minerals", "comparison", "family"],
-    confidence: "needs-photo-index",
   },
   {
     id: "place-evidence",
@@ -220,7 +195,6 @@ export const stops: Stop[] = [
     stamp: "Mapped Evidence",
     nextCue: "Prepare to move from objects to the room where people gathered to understand them.",
     tags: ["maps", "place", "history"],
-    confidence: "seed",
   },
   {
     id: "public-science-room",
@@ -243,7 +217,6 @@ export const stops: Stop[] = [
     stamp: "Public Science",
     nextCue: "Stay in the Lecture Hall. Look for evidence of people, memory, and authority.",
     tags: ["lecture-hall", "history", "place"],
-    confidence: "needs-photo-index",
   },
   {
     id: "portrait-witnesses",
@@ -266,7 +239,6 @@ export const stops: Stop[] = [
     stamp: "Human Evidence",
     nextCue: "Move toward the stair route upward when ready.",
     tags: ["people", "institution", "history"],
-    confidence: "needs-photo-index",
   },
   {
     id: "balcony-reveal",
@@ -289,7 +261,6 @@ export const stops: Stop[] = [
     stamp: "Cabinet Opened",
     nextCue: "Choose a side run. You will come back rather than circle continuously.",
     tags: ["third-floor", "orientation", "natural-history"],
-    confidence: "ready",
   },
   {
     id: "bird-architecture",
@@ -312,7 +283,6 @@ export const stops: Stop[] = [
     stamp: "Bird Architecture",
     nextCue: "Look nearby for smaller lives: insects, shells, or compact specimens.",
     tags: ["birds", "adaptation", "third-floor"],
-    confidence: "needs-photo-index",
   },
   {
     id: "tiny-monster",
@@ -335,7 +305,6 @@ export const stops: Stop[] = [
     stamp: "Tiny Menace",
     nextCue: "Find something from water, stone, or deep time.",
     tags: ["insects", "fun", "third-floor"],
-    confidence: "needs-photo-index",
   },
   {
     id: "sea-in-the-building",
@@ -358,7 +327,6 @@ export const stops: Stop[] = [
     stamp: "Indoor Ocean",
     nextCue: "Finish by choosing the strangest thing you saw today.",
     tags: ["marine", "third-floor", "wonder"],
-    confidence: "needs-photo-index",
   },
   {
     id: "the-strangest-candidate",
@@ -381,7 +349,6 @@ export const stops: Stop[] = [
     stamp: "Wait, What?",
     nextCue: "Your expedition is ready to close.",
     tags: ["wonder", "recap", "third-floor"],
-    confidence: "ready",
   },
   {
     id: "special-edge",
@@ -404,7 +371,6 @@ export const stops: Stop[] = [
     stamp: "Careful Keeping",
     nextCue: "Return to the public route and continue toward the Lecture Hall or third floor.",
     tags: ["special-collections", "preservation", "hidden"],
-    confidence: "needs-photo-index",
   },
 ];
 
@@ -487,34 +453,5 @@ export const paths: TourPath[] = [
       "sea-in-the-building",
       "the-strangest-candidate",
     ],
-  },
-];
-
-export type ContentGap = {
-  area: string;
-  needed: string;
-  why: string;
-};
-
-export const contentGaps: ContentGap[] = [
-  {
-    area: "Mineral Hall",
-    needed: "Case-by-case photo index with stable case names, approach directions, and 3-5 reliable visual anchors per case.",
-    why: "This lets clues point visitors to things they can actually find without pretending we know every specimen.",
-  },
-  {
-    area: "Lecture Hall",
-    needed: "Photo-indexed route from stair arrival to stage, portraits, cases, seating, and third-floor stair connection.",
-    why: "The room needs to work as place-based storytelling, not a generic historic-room screen.",
-  },
-  {
-    area: "Third Floor",
-    needed: "Dead-end side-run map with display zones tied to still numbers and visitor-facing direction language.",
-    why: "This prevents the app from sending people around a loop that does not exist.",
-  },
-  {
-    area: "Special Collections",
-    needed: "A short approved list of visible/open moments suitable for public interpretation.",
-    why: "Use it for atmosphere and preservation logic only where DCIS is comfortable exposing details.",
   },
 ];

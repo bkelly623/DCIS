@@ -18,9 +18,7 @@ import {
 } from "lucide-react";
 import {
   characters,
-  contentGaps,
   paths,
-  rooms,
   stops,
   type Character,
   type PathId,
@@ -29,10 +27,8 @@ import {
 } from "./data";
 import {
   mineralMapItems,
-  mineralMissingShots,
-  mineralSpecimenRecords,
+  mineralPublicNotice,
   specimensForDisplay,
-  type MineralEvidenceStatus,
 } from "./mineralHallKnowledge";
 import "./styles.css";
 import { Discovery, BuildingOrientation } from "./Discovery";
@@ -373,7 +369,7 @@ function TourExperience({
           <div className="room-overlay">
             <span>{stop.room}</span>
             <strong>{stop.zone}</strong>
-            <small>{stop.duration} · {confidenceLabel(stop.confidence)}</small>
+            <small>{stop.duration}</small>
           </div>
         </section>
 
@@ -523,8 +519,9 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
         <div>
           <p className="kicker"><MapPinned size={16} /> Mineral Hall map</p>
           <h1>Explore the exhibit records.</h1>
+          <p>{mineralPublicNotice}</p>
           <p>
-            Based on the room sketch and exhibit walkthrough. Select a number to explore its display.
+            Select a number to explore its display.
             Paired numbers share a wall bay: 11 and 15 are wall displays; 12 and 14 are below them. Not to scale.
           </p>
         </div>
@@ -546,7 +543,7 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
             {mineralMapItems.map((item) => (
               <g
                 key={item.id}
-                className={`map-item sketch-pin ${item.status} ${item.id === selected.id ? "selected" : ""}`}
+                className={`map-item sketch-pin ${item.id === selected.id ? "selected" : ""}`}
                 onClick={() => setSelectedId(item.id)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") setSelectedId(item.id);
@@ -563,163 +560,20 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
         </div>
 
         <aside className="map-detail">
-          <span className={`status-dot ${selected.status}`}>{statusLabel(selected.status)}</span>
           <h2>{selected.label}</h2>
           <p>{selected.summary}</p>
-          <dl className="map-evidence">
-            <div>
-              <dt>KB ID</dt>
-              <dd>{selected.displayId}</dd>
-            </div>
-            <div>
-              <dt>Evidence</dt>
-              <dd>{selected.evidence}</dd>
-            </div>
-            <div>
-              <dt>Confidence</dt>
-              <dd>{selected.confidence}</dd>
-            </div>
-          </dl>
           {selectedSpecimens.length > 0 && (
             <div className="map-specimens">
               <strong>Indexed records</strong>
               {selectedSpecimens.map((record) => (
                 <article key={record.id}>
-                  <span className={`record-pill ${record.publicUse}`}>{record.publicUse}</span>
                   <h3>{record.name}</h3>
-                  <p>{record.labelDetail ?? record.type}</p>
-                  <small>{record.id} · {record.evidence.join(", ")}</small>
+                  <p>{record.description ?? record.type}</p>
                 </article>
               ))}
             </div>
           )}
-          <div className="map-key">
-            <span><i className="matched" /> Confirmed by media or direct correction</span>
-            <span><i className="partial" /> Partial or unreadable content</span>
-            <span><i className="candidate" /> Needs close-source confirmation</span>
-            <span><i className="located" /> Location only</span>
-          </div>
         </aside>
-      </div>
-    </section>
-  );
-}
-
-function statusLabel(status: MineralEvidenceStatus) {
-  if (status === "matched") return "confirmed";
-  if (status === "candidate") return "needs proof";
-  if (status === "partial") return "partial";
-  return "location only";
-}
-
-function StaffContent({ onBack }: { onBack: () => void }) {
-  const [query, setQuery] = React.useState("");
-  const roomCounts = Object.entries(rooms).map(([id, room]) => ({
-    id,
-    ...room,
-    stops: stops.filter((stop) => stop.roomId === id).length,
-  }));
-  const normalizedQuery = query.trim().toLowerCase();
-  const filteredSpecimens = mineralSpecimenRecords.filter((record) => {
-    if (!normalizedQuery) return true;
-    return [
-      record.name,
-      record.displayLabel,
-      record.displayId,
-      record.id,
-      record.labelDetail ?? "",
-      record.evidence.join(" "),
-    ].some((value) => value.toLowerCase().includes(normalizedQuery));
-  });
-  const mineralStats = {
-    displays: mineralMapItems.length,
-    indexed: mineralSpecimenRecords.length,
-    confirmed: mineralSpecimenRecords.filter((record) => record.publicUse === "searchable").length,
-    gaps: mineralMissingShots.length,
-  };
-
-  return (
-    <section className="screen staff-screen">
-      <button className="text-button" onClick={onBack}><Home size={18} /> Back to visitor app</button>
-      <div className="intro-band compact">
-        <div>
-          <p className="kicker"><ClipboardList size={16} /> Content operating model</p>
-          <h1>Mineral Hall exhibit reference.</h1>
-          <p>
-            Exhibit identities and indexed specimens are reconciled to the supplied walkthroughs and photographs.
-            The specimen inventory is not exhaustive; the route schematic is not a measured floor plan.
-          </p>
-        </div>
-      </div>
-
-      <section className="knowledge-panel">
-        <div className="knowledge-header">
-          <div>
-            <p className="section-title">Mineral Hall evidence layer</p>
-            <h2>Search indexed specimens and exhibit records.</h2>
-          </div>
-          <label className="search-field">
-            <span>Search</span>
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="datolite, Upper Darby, Case 1..."
-            />
-          </label>
-        </div>
-
-        <div className="knowledge-stats">
-          <span><strong>{mineralStats.displays}</strong> display markers</span>
-          <span><strong>{mineralStats.indexed}</strong> records</span>
-          <span><strong>{mineralStats.confirmed}</strong> confirmed/searchable</span>
-          <span><strong>{mineralStats.gaps}</strong> evidence reviews</span>
-        </div>
-
-        <div className="record-grid">
-          {filteredSpecimens.map((record) => (
-            <article className="record-card" key={record.id}>
-              <span className={`record-pill ${record.publicUse}`}>{record.publicUse}</span>
-              <h3>{record.name}</h3>
-              <p>{record.labelDetail ?? record.type}</p>
-              <small>{record.displayLabel} · {record.displayId}</small>
-              <small>{record.id} · {record.evidence.join(", ")}</small>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="missing-shot-panel">
-        <p className="section-title">Saved-evidence review queue</p>
-        <div className="shot-list">
-          {mineralMissingShots.slice(0, 6).map((shot) => (
-            <article className="shot-row" key={`${shot.priority}-${shot.target}`}>
-              <strong>{shot.priority}</strong>
-              <span>{shot.target}</span>
-              <small>{shot.why}</small>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className="staff-grid">
-        {roomCounts.map((room) => (
-          <article className="staff-card" key={room.id}>
-            <strong>{room.name}</strong>
-            <span>{room.stops} seeded stops</span>
-            <p>{room.role}</p>
-            <small>{room.note}</small>
-          </article>
-        ))}
-      </div>
-
-      <div className="gap-list">
-        {contentGaps.map((gap) => (
-          <article className="gap-row" key={gap.area}>
-            <strong>{gap.area}</strong>
-            <p>{gap.needed}</p>
-            <small>{gap.why}</small>
-          </article>
-        ))}
       </div>
     </section>
   );
@@ -730,12 +584,6 @@ function getPathStops(pathId: PathId) {
   return path.stopIds
     .map((stopId) => stops.find((stop) => stop.id === stopId))
     .filter((stop): stop is Stop => Boolean(stop));
-}
-
-function confidenceLabel(confidence: Stop["confidence"]) {
-  if (confidence === "ready") return "route verified";
-  if (confidence === "seed") return "seed content";
-  return "awaiting photo index";
 }
 
 function titleFor(completed: number, pathId: PathId) {

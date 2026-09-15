@@ -1,0 +1,714 @@
+{
+  "schemaVersion": 1,
+  "notice": "Prototype reference, not an institutionally approved catalog. Selected labels only; identifications may be incomplete. Check the display labels.",
+  "mapItems": [
+    {
+      "id": "entry",
+      "displayId": "MH-DISP-ENTRY-001",
+      "label": "Entry",
+      "summary": "Entrance to Mineral Hall from the inner entrance.",
+      "x": 310,
+      "y": 890,
+      "width": 126,
+      "height": 54
+    },
+    {
+      "id": "shells",
+      "displayId": "MH-DISP-SHELLS-001",
+      "label": "Shells",
+      "summary": "Shell display near the Mineral Hall door. Contents may vary.",
+      "x": 480,
+      "y": 805,
+      "width": 116,
+      "height": 54
+    },
+    {
+      "id": "1",
+      "displayId": "MH-DISP-001",
+      "label": "1 Branegan",
+      "summary": "Branegan Cabinet. Inner-wall run after shells; Branegan Cabinet",
+      "x": 442,
+      "y": 700,
+      "width": 158,
+      "height": 54
+    },
+    {
+      "id": "2",
+      "displayId": "MH-DISP-002",
+      "label": "2 Local Stones",
+      "summary": "Branegan Cabinet B / Local Building Stones. Next inner-wall case; Branegan Cabinet B / Local Building Stones",
+      "x": 442,
+      "y": 550,
+      "width": 150,
+      "height": 54
+    },
+    {
+      "id": "3",
+      "displayId": "MH-DISP-003",
+      "label": "3 PA",
+      "summary": "Minerals from Pennsylvania. Interior wall of deeper L recess",
+      "x": 354,
+      "y": 447,
+      "width": 146,
+      "height": 54
+    },
+    {
+      "id": "4",
+      "displayId": "MH-DISP-004",
+      "label": "4 Fluorescent",
+      "summary": "Fluorescent mineral case. Interior wall of deeper L recess; fluorescent case",
+      "x": 255,
+      "y": 447,
+      "width": 150,
+      "height": 54
+    },
+    {
+      "id": "5",
+      "displayId": "MH-DISP-005",
+      "label": "5 U.S.",
+      "summary": "Minerals from United States. Standalone inner wall",
+      "x": 105,
+      "y": 352,
+      "width": 142,
+      "height": 54
+    },
+    {
+      "id": "6",
+      "displayId": "MH-DISP-006",
+      "label": "6 New Acq.",
+      "summary": "Minerals from World-Wide (New Acquisitions). First case of back-wall run",
+      "x": 170,
+      "y": 266,
+      "width": 158,
+      "height": 54
+    },
+    {
+      "id": "7",
+      "displayId": "MH-DISP-007",
+      "label": "7 World",
+      "summary": "Minerals from World-Wide. Back-wall run after 6",
+      "x": 310,
+      "y": 266,
+      "width": 134,
+      "height": 54
+    },
+    {
+      "id": "8",
+      "displayId": "MH-DISP-008",
+      "label": "8 Reynolds",
+      "summary": "D. Richard Reynolds memorial cabinet. Back-wall run after 7",
+      "x": 435,
+      "y": 266,
+      "width": 134,
+      "height": 54
+    },
+    {
+      "id": "9",
+      "displayId": "MH-DISP-009",
+      "label": "9 Arndt",
+      "summary": "Harold W. Arndt Collection. Last back-wall case before corner door",
+      "x": 550,
+      "y": 266,
+      "width": 144,
+      "height": 54
+    },
+    {
+      "id": "10",
+      "displayId": "MH-DISP-010",
+      "label": "10 Sill",
+      "summary": "First window-sill mineral display. First window sill",
+      "x": 748,
+      "y": 335,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "11",
+      "displayId": "MH-DISP-011",
+      "label": "11 Wall",
+      "summary": "Minerals from the Dr. George Smith Collection — about 1835. Between first and second windows, wall level",
+      "x": 753,
+      "y": 457,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "12",
+      "displayId": "MH-DISP-012",
+      "label": "12 Ground",
+      "summary": "Four large mineral specimens under acrylic covers. Between first and second windows, ground level",
+      "x": 680,
+      "y": 457,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "13",
+      "displayId": "MH-DISP-013",
+      "label": "13 Sill",
+      "summary": "Second window-sill mineral display. Second window sill",
+      "x": 749,
+      "y": 595,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "14",
+      "displayId": "MH-DISP-014",
+      "label": "14 Ground",
+      "summary": "Petrified-wood display. Between second and third windows, ground level",
+      "x": 680,
+      "y": 735,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "15",
+      "displayId": "MH-DISP-015",
+      "label": "15 Wall",
+      "summary": "Philadelphia Region / Coaquannock framed map. Between second and third windows, wall level",
+      "x": 753,
+      "y": 735,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "16",
+      "displayId": "MH-DISP-016",
+      "label": "16 Sill",
+      "summary": "Third window-sill mineral display. Third window sill",
+      "x": 749,
+      "y": 850,
+      "width": 116,
+      "height": 48
+    },
+    {
+      "id": "17",
+      "displayId": "MH-DISP-017",
+      "label": "17 Cassin",
+      "summary": "John Cassin display and mining-district map. Window-side wall immediately right of last window, near corner; John Cassin",
+      "x": 755,
+      "y": 930,
+      "width": 104,
+      "height": 48
+    },
+    {
+      "id": "18",
+      "displayId": "MH-DISP-018",
+      "label": "18 Corner",
+      "summary": "Corner specimen cabinet / left unit of 18–19 pair. Starts at corner",
+      "x": 688,
+      "y": 965,
+      "width": 104,
+      "height": 48
+    },
+    {
+      "id": "19",
+      "displayId": "MH-DISP-019",
+      "label": "19 Near door",
+      "summary": "Door-side specimen cabinet / right unit of 18–19 pair. Closer to Special Collections/front-wall door",
+      "x": 621,
+      "y": 965,
+      "width": 126,
+      "height": 48
+    }
+  ],
+  "records": [
+    {
+      "id": "MH-SPEC-001",
+      "name": "Sulfur, Aragonite, Celestine",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-001",
+      "displayLabel": "Case 1 / Branegan Cabinet"
+    },
+    {
+      "id": "MH-SPEC-002",
+      "name": "Amphibolite Gneiss",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-002",
+      "displayLabel": "Case 2 / Branegan Cabinet B / Local Building Stones"
+    },
+    {
+      "id": "MH-SPEC-003",
+      "name": "Quartz var. Smoky",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-010",
+      "displayLabel": "Case 10 / First window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-004",
+      "name": "Barite on Fluorite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-010",
+      "displayLabel": "Case 10 / First window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-005",
+      "name": "Quartz var. Rose",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-013",
+      "displayLabel": "Case 13 / Second window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-006",
+      "name": "Limonite/Goethite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-013",
+      "displayLabel": "Case 13 / Second window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-007",
+      "name": "Petrified Wood",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-014",
+      "displayLabel": "Case 14 / Petrified-wood display"
+    },
+    {
+      "id": "MH-SPEC-008",
+      "name": "Datolite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-016",
+      "displayLabel": "Case 16 / Third window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-009",
+      "name": "Calcite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-016",
+      "displayLabel": "Case 16 / Third window-sill mineral display"
+    },
+    {
+      "id": "MH-SPEC-010",
+      "name": "Soapstone",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-011",
+      "name": "Geode",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-012",
+      "name": "Limestone",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-013",
+      "name": "Tourmaline",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-014",
+      "name": "Calcite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-015",
+      "name": "Garnet",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-016",
+      "name": "Feldspar",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-017",
+      "name": "Mica",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-018",
+      "name": "Dolomite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-019",
+      "name": "Limonite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-020",
+      "name": "Granite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-021",
+      "name": "Graphite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-022",
+      "name": "Coal",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-023",
+      "name": "Lava",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-024",
+      "name": "Pumice",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-025",
+      "name": "Shale",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-026",
+      "name": "Malachite/Azurite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-027",
+      "name": "Pegmatite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-028",
+      "name": "Slate",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-029",
+      "name": "Fluorite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-030",
+      "name": "Quartz",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-031",
+      "name": "Rose Quartz",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-032",
+      "name": "Halite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-033",
+      "name": "Hematite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-034",
+      "name": "Fern Fossil",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-035",
+      "name": "Sandstone",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-036",
+      "name": "Beryl",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-037",
+      "name": "Dravite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-038",
+      "name": "Cryolite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-039",
+      "name": "Malachite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-040",
+      "name": "Graphite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-041",
+      "name": "Magnetite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-042",
+      "name": "Limonite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-043",
+      "name": "Chalcopyrite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-044",
+      "name": "Azurite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania",
+      "description": "Identification is tentative; compare with the case label."
+    },
+    {
+      "id": "MH-SPEC-045",
+      "name": "Orthoclase, variety Cassinite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-017",
+      "displayLabel": "Case 17 / John Cassin display and mining-district map"
+    },
+    {
+      "id": "MH-SPEC-046",
+      "name": "Shale",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-SPEC-047",
+      "name": "Pectolite & Prehnite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-012",
+      "displayLabel": "Case 12 / Four large mineral specimens under acrylic covers"
+    },
+    {
+      "id": "MH-SPEC-048",
+      "name": "Magnetite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-012",
+      "displayLabel": "Case 12 / Four large mineral specimens under acrylic covers"
+    },
+    {
+      "id": "MH-SPEC-049",
+      "name": "Microcline & Hornblende",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-012",
+      "displayLabel": "Case 12 / Four large mineral specimens under acrylic covers"
+    },
+    {
+      "id": "MH-SPEC-050",
+      "name": "Calcite",
+      "type": "specimen/group label",
+      "displayId": "MH-DISP-012",
+      "displayLabel": "Case 12 / Four large mineral specimens under acrylic covers"
+    },
+    {
+      "id": "MH-EXH-MAP-001",
+      "name": "Branegan Cabinet",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-001",
+      "displayLabel": "Case 1 / Branegan Cabinet"
+    },
+    {
+      "id": "MH-EXH-MAP-002",
+      "name": "Branegan Cabinet B / Local Building Stones",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-002",
+      "displayLabel": "Case 2 / Branegan Cabinet B / Local Building Stones"
+    },
+    {
+      "id": "MH-EXH-MAP-003",
+      "name": "Minerals from Pennsylvania",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-003",
+      "displayLabel": "Case 3 / Minerals from Pennsylvania"
+    },
+    {
+      "id": "MH-EXH-MAP-004",
+      "name": "Fluorescent mineral case",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-004",
+      "displayLabel": "Case 4 / Fluorescent mineral case"
+    },
+    {
+      "id": "MH-EXH-MAP-005",
+      "name": "Minerals from United States",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-005",
+      "displayLabel": "Case 5 / Minerals from United States"
+    },
+    {
+      "id": "MH-EXH-MAP-006",
+      "name": "Minerals from World-Wide (New Acquisitions)",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-006",
+      "displayLabel": "Case 6 / Minerals from World-Wide (New Acquisitions)"
+    },
+    {
+      "id": "MH-EXH-MAP-007",
+      "name": "Minerals from World-Wide",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-007",
+      "displayLabel": "Case 7 / Minerals from World-Wide"
+    },
+    {
+      "id": "MH-EXH-MAP-008",
+      "name": "D. Richard Reynolds memorial cabinet",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-008",
+      "displayLabel": "Case 8 / D. Richard Reynolds memorial cabinet"
+    },
+    {
+      "id": "MH-EXH-MAP-009",
+      "name": "Harold W. Arndt Collection",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-009",
+      "displayLabel": "Case 9 / Harold W. Arndt Collection"
+    },
+    {
+      "id": "MH-EXH-MAP-010",
+      "name": "First window-sill mineral display",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-010",
+      "displayLabel": "Case 10 / First window-sill mineral display"
+    },
+    {
+      "id": "MH-EXH-MAP-011",
+      "name": "Minerals from the Dr. George Smith Collection — about 1835",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-011",
+      "displayLabel": "Case 11 / Minerals from the Dr. George Smith Collection — about 1835"
+    },
+    {
+      "id": "MH-EXH-MAP-012",
+      "name": "Four large mineral specimens under acrylic covers",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-012",
+      "displayLabel": "Case 12 / Four large mineral specimens under acrylic covers"
+    },
+    {
+      "id": "MH-EXH-MAP-013",
+      "name": "Second window-sill mineral display",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-013",
+      "displayLabel": "Case 13 / Second window-sill mineral display"
+    },
+    {
+      "id": "MH-EXH-MAP-014",
+      "name": "Petrified-wood display",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-014",
+      "displayLabel": "Case 14 / Petrified-wood display"
+    },
+    {
+      "id": "MH-EXH-MAP-015",
+      "name": "Philadelphia Region / Coaquannock framed map",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-015",
+      "displayLabel": "Case 15 / Philadelphia Region / Coaquannock framed map"
+    },
+    {
+      "id": "MH-EXH-MAP-016",
+      "name": "Third window-sill mineral display",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-016",
+      "displayLabel": "Case 16 / Third window-sill mineral display"
+    },
+    {
+      "id": "MH-EXH-MAP-017",
+      "name": "John Cassin display and mining-district map",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-017",
+      "displayLabel": "Case 17 / John Cassin display and mining-district map"
+    },
+    {
+      "id": "MH-EXH-MAP-018",
+      "name": "Corner specimen cabinet / left unit of 18–19 pair",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-018",
+      "displayLabel": "Case 18 / Corner specimen cabinet / left unit of 18–19 pair"
+    },
+    {
+      "id": "MH-EXH-MAP-019",
+      "name": "Door-side specimen cabinet / right unit of 18–19 pair",
+      "type": "exhibit identity",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Case 19 / Door-side specimen cabinet / right unit of 18–19 pair"
+    },
+    {
+      "id": "MH-EXH-007",
+      "name": "Basic Rock Collection",
+      "type": "exhibit poster",
+      "displayId": "MH-DISP-019",
+      "displayLabel": "Door-side specimen cabinet / right unit of 18–19 pair"
+    }
+  ]
+}
