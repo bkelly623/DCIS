@@ -88,6 +88,13 @@ Approved visitor-facing output:
 
 The building layout should be a structured data file that gets refined over time.
 
+The app needs two map presentations from the same underlying evidence:
+
+- Internal/back-office map: complete operational map for staff and employee use. It may show staff rooms, offices, service spaces, bathrooms, storage, capture waypoints, private labels, confidence notes, and correction history.
+- Consumer-facing map: public visitor map only. It should hide or abstract staff/private areas while still showing where the visitor is, how to reach public destinations, and simple markers for anchors such as the stairs, Mineral Hall, Special Exhibit Room, and public route transitions.
+
+Public map labels should be direct and useful. For example, "stairs to second floor" can be shown as a dot/star/highlight next to the front entrance route, with the instruction "left from the second entrance," without exposing the adjacent staff/service geometry.
+
 It should describe:
 
 - floors
@@ -140,4 +147,3 @@ Example:
 5. Public guide uses approved knowledge.
 6. Visitor questions and behavior reveal gaps.
 7. Back office improves the map, records, and guide scripts.
-

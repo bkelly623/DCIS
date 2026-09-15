@@ -27,9 +27,17 @@ import {
   type Stop,
   type TourPath,
 } from "./data";
+import {
+  mineralMapItems,
+  mineralMissingShots,
+  mineralSpecimenRecords,
+  specimensForDisplay,
+  type MineralEvidenceStatus,
+} from "./mineralHallKnowledge";
 import "./styles.css";
+import { Discovery, BuildingOrientation } from "./Discovery";
 
-type Phase = "choose-path" | "setup" | "tour" | "recap" | "map" | "staff";
+type Phase = "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation";
 
 type Progress = {
   teamName: string;
@@ -110,18 +118,16 @@ function App() {
               Continue
             </button>
           )}
-          <button className="ghost-button" onClick={() => setPhase("staff")}>
-            <ClipboardList size={18} />
-            Content
-          </button>
-          <button className="ghost-button" onClick={() => setPhase("map")}>
+          <button className="ghost-button" onClick={() => setPhase("orientation")}>
             <MapPinned size={18} />
             Map
           </button>
         </nav>
       </header>
 
-      {phase === "choose-path" && (
+      {phase === "choose-path" && <Discovery onMap={() => setPhase("map")} onPaths={() => setPhase("paths")} onOrientation={() => setPhase("orientation")} />}
+      {phase === "orientation" && <BuildingOrientation onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
+      {phase === "paths" && (
         <PathPicker
           selectedPathId={selectedPathId}
           onOpenMap={() => setPhase("map")}
@@ -160,7 +166,7 @@ function App() {
 
       {phase === "map" && <MineralHallMap onBack={() => setPhase("choose-path")} />}
 
-      {phase === "staff" && <StaffContent onBack={() => setPhase("choose-path")} />}
+
     </main>
   );
 }
@@ -184,7 +190,7 @@ function PathPicker({
           <h1>Choose how the Institute should come alive.</h1>
           <p>
             Start in Mineral Hall, climb into the Lecture Hall, and let the third floor become the payoff.
-            The front hall stays what it is: a launch point, not fake content.
+            Choose a longer adventure, or start with one discovery.
           </p>
         </div>
         {onContinue && (
@@ -505,43 +511,10 @@ function Recap({ progress, onRestart, onChoosePath }: { progress: Progress; onRe
   );
 }
 
-type MineralMapItem = {
-  id: string;
-  label: string;
-  summary: string;
-  status: "matched" | "located" | "partial";
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-};
-
-const mineralMapItems: MineralMapItem[] = [
-  { id: "shells", label: "Shells", summary: "Shells, fossils, and take-home material at the Mineral Hall entrance.", status: "matched", x: 360, y: 755, width: 94, height: 36 },
-  { id: "1", label: "1 Pennsylvania", summary: "Minerals from Pennsylvania, the first vertical-run case above the shells.", status: "matched", x: 390, y: 655, width: 128, height: 44 },
-  { id: "2", label: "2 World-Wide", summary: "Minerals from World-Wide, the next vertical-run case.", status: "matched", x: 390, y: 550, width: 128, height: 44 },
-  { id: "3", label: "3 Mixed case", summary: "Inner-turn mineral case. Photo exists, but individual labels are not safely readable yet.", status: "partial", x: 500, y: 458, width: 130, height: 44 },
-  { id: "4", label: "4 Fluorescent", summary: "Special fluorescent/lighted case, visible as Branegan Cabinet C.", status: "matched", x: 315, y: 462, width: 132, height: 44 },
-  { id: "5", label: "5 Reynolds", summary: "Standalone D. Richard Reynolds mineral cabinet on the left wall.", status: "matched", x: 92, y: 405, width: 112, height: 54 },
-  { id: "6", label: "6 Collection", summary: "Back-wall collection case with portrait/plaque. Plaque spelling still needs confirmation.", status: "matched", x: 178, y: 325, width: 142, height: 44 },
-  { id: "7", label: "7 Back wall", summary: "Back-wall case between 6 and 8. Location known; contents still need a unique photo match.", status: "located", x: 328, y: 325, width: 112, height: 44 },
-  { id: "8", label: "8 Back wall", summary: "Back-wall case between 7 and 9. Location known; contents still need a unique photo match.", status: "located", x: 448, y: 325, width: 112, height: 44 },
-  { id: "9", label: "9 Back wall", summary: "Last back-wall case before the corner door.", status: "located", x: 568, y: 325, width: 112, height: 44 },
-  { id: "10", label: "10 Window sill", summary: "First right-wall window-sill mineral display; includes large specimens such as smoky quartz and barite on fluorite.", status: "matched", x: 700, y: 435, width: 128, height: 44 },
-  { id: "11", label: "11 Wall", summary: "Wall-level display between the first and second windows.", status: "located", x: 670, y: 590, width: 94, height: 40 },
-  { id: "12", label: "12 Ground", summary: "Ground-level display in the same between-window bay as 11.", status: "located", x: 782, y: 590, width: 104, height: 40 },
-  { id: "13", label: "13 Window sill", summary: "Second right-wall window-sill mineral display.", status: "located", x: 700, y: 740, width: 128, height: 44 },
-  { id: "14", label: "14 Ground", summary: "Ground-level display between the second and third windows.", status: "located", x: 668, y: 888, width: 104, height: 40 },
-  { id: "15", label: "15 Wall", summary: "Wall-level display between the second and third windows.", status: "located", x: 788, y: 888, width: 94, height: 40 },
-  { id: "16", label: "16 Window sill", summary: "Third right-wall window-sill mineral display.", status: "located", x: 700, y: 1000, width: 128, height: 44 },
-  { id: "17", label: "17 Corner side", summary: "Tucked to the right of the last window.", status: "located", x: 774, y: 1126, width: 112, height: 42 },
-  { id: "18", label: "18 Corner", summary: "Corner case along the bottom-right run.", status: "located", x: 656, y: 1126, width: 96, height: 42 },
-  { id: "19", label: "19 Near door", summary: "Case closer to the bottom door.", status: "located", x: 528, y: 1126, width: 108, height: 42 },
-];
-
 function MineralHallMap({ onBack }: { onBack: () => void }) {
-  const [selectedId, setSelectedId] = React.useState("1");
+  const [selectedId, setSelectedId] = React.useState("entry");
   const selected = mineralMapItems.find((item) => item.id === selectedId) ?? mineralMapItems[0];
+  const selectedSpecimens = specimensForDisplay(selected.displayId);
 
   return (
     <section className="screen map-screen">
@@ -549,41 +522,31 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
       <div className="intro-band compact">
         <div>
           <p className="kicker"><MapPinned size={16} /> Mineral Hall map</p>
-          <h1>Walk the room by numbered cases.</h1>
+          <h1>Explore the exhibit records.</h1>
           <p>
-            This is the first app-native map surface: public visitor geometry, doors, windows, island cases,
-            and the current numbered Mineral Hall case sequence.
+            Based on the room sketch and exhibit walkthrough. Select a number to explore its display.
+            Paired numbers share a wall bay: 11 and 15 are wall displays; 12 and 14 are below them. Not to scale.
           </p>
         </div>
       </div>
 
       <div className="map-layout">
         <div className="map-board" aria-label="Mineral Hall numbered exhibit map">
-          <svg viewBox="0 0 980 1280" role="img" aria-labelledby="mineral-map-title mineral-map-desc">
-            <title id="mineral-map-title">Mineral Hall numbered map</title>
-            <desc id="mineral-map-desc">Sketch-faithful public Mineral Hall map with doors, windows, island cases, shells, and cases 1 through 19.</desc>
-            <path
-              className="map-room"
-              d="M350 1160 L350 1040 L305 1040 L305 780 L255 780 L255 610 L190 610 L190 515 L95 515 L95 390 L235 390 L235 245 L355 245 L355 80 L478 80 L478 160 L420 160 L420 345 L695 345 L695 310 L828 310 L828 345 L900 345 L900 1115 L804 1115 L804 1160 Z"
-            />
-            <rect className="map-door" x="300" y="975" width="62" height="92" />
-            <text className="map-marker-text" x="252" y="1025">entry door</text>
-            <rect className="map-door" x="695" y="318" width="132" height="42" />
-            <text className="map-marker-text" x="760" y="295">door</text>
-            <rect className="map-door" x="430" y="1128" width="160" height="50" />
-            <text className="map-marker-text" x="510" y="1208">door</text>
-            <rect className="map-window" x="850" y="420" width="58" height="118" />
-            <rect className="map-window" x="850" y="660" width="58" height="128" />
-            <rect className="map-window" x="850" y="910" width="58" height="126" />
-            <text className="map-marker-text" x="932" y="482">window</text>
-            <text className="map-marker-text" x="932" y="728">window</text>
-            <text className="map-marker-text" x="932" y="978">window</text>
-            <ellipse className="map-island" cx="620" cy="700" rx="70" ry="320" />
-            <text className="map-island-label" x="620" y="700">island cases</text>
+          <svg viewBox="0 160 1000 920" role="img" aria-labelledby="mineral-map-title mineral-map-desc">
+            <title id="mineral-map-title">Mineral Hall sketch-based exhibit map</title>
+            <desc id="mineral-map-desc">Room outline with a straight entrance-side wall, deeper recess, three doors and three windows. Wall displays 11 and 15 sit above floor displays 12 and 14. Display 17 stays on the window wall.</desc>
+            <path d="M70 230 H800 V1000 H400 V480 H180 V410 H70 Z" fill="#eef3ef" />
+            <path d="M650 230 H70 V410 H180 V480 H400 V850 M400 935 V1000 H465 M565 1000 H800 V230 H755" fill="none" stroke="#243e35" strokeWidth="7" strokeLinejoin="miter" />
+            <path d="M650 230 H755 M400 850 V935 M465 1000 H565" stroke="#a3571e" strokeWidth="3" strokeDasharray="7 6" />
+            <text className="map-marker-text" x="702" y="205">Door</text>
+            <text className="map-marker-text" x="515" y="1040">Door</text>
+            {[{y:285,h:100},{y:535,h:115},{y:805,h:90}].map(w => <g key={w.y}><rect className="map-window" x="788" y={w.y} width="24" height={w.h}/><text className="map-marker-text" x="862" y={w.y+w.h/2+6}>Window</text></g>)}
+            <rect className="map-island" x="555" y="380" width="100" height="510" rx="50" />
+            <text className="map-island-label" x="605" y="635" transform="rotate(90 605 635)">Island cases</text>
             {mineralMapItems.map((item) => (
               <g
                 key={item.id}
-                className={`map-item ${item.status} ${item.id === selected.id ? "selected" : ""}`}
+                className={`map-item sketch-pin ${item.status} ${item.id === selected.id ? "selected" : ""}`}
                 onClick={() => setSelectedId(item.id)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") setSelectedId(item.id);
@@ -592,21 +555,49 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
                 tabIndex={0}
                 aria-label={`${item.label}: ${item.summary}`}
               >
-                <rect x={item.x} y={item.y} width={item.width ?? 110} height={item.height ?? 42} />
-                <text x={item.x + 10} y={item.y + 27}>{item.label}</text>
+                {/^\d+$/.test(item.id) ? <circle cx={item.x} cy={item.y} r="25" /> : <rect x={item.x-52} y={item.y-23} width="104" height="46" />}
+                <text x={item.x} y={item.y} className="sketch-pin-number">{item.id === "entry" ? "Entrance" : item.id === "shells" ? "Shells" : item.id}</text>
               </g>
             ))}
           </svg>
         </div>
 
         <aside className="map-detail">
-          <span className={`status-dot ${selected.status}`}>{selected.status === "matched" ? "photo matched" : selected.status === "partial" ? "partial" : "location set"}</span>
+          <span className={`status-dot ${selected.status}`}>{statusLabel(selected.status)}</span>
           <h2>{selected.label}</h2>
           <p>{selected.summary}</p>
+          <dl className="map-evidence">
+            <div>
+              <dt>KB ID</dt>
+              <dd>{selected.displayId}</dd>
+            </div>
+            <div>
+              <dt>Evidence</dt>
+              <dd>{selected.evidence}</dd>
+            </div>
+            <div>
+              <dt>Confidence</dt>
+              <dd>{selected.confidence}</dd>
+            </div>
+          </dl>
+          {selectedSpecimens.length > 0 && (
+            <div className="map-specimens">
+              <strong>Indexed records</strong>
+              {selectedSpecimens.map((record) => (
+                <article key={record.id}>
+                  <span className={`record-pill ${record.publicUse}`}>{record.publicUse}</span>
+                  <h3>{record.name}</h3>
+                  <p>{record.labelDetail ?? record.type}</p>
+                  <small>{record.id} · {record.evidence.join(", ")}</small>
+                </article>
+              ))}
+            </div>
+          )}
           <div className="map-key">
-            <span><i className="matched" /> Photo/content matched</span>
-            <span><i className="partial" /> Partial identification</span>
-            <span><i className="located" /> Placed, needs unique content</span>
+            <span><i className="matched" /> Confirmed by media or direct correction</span>
+            <span><i className="partial" /> Partial or unreadable content</span>
+            <span><i className="candidate" /> Needs close-source confirmation</span>
+            <span><i className="located" /> Location only</span>
           </div>
         </aside>
       </div>
@@ -614,12 +605,38 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
   );
 }
 
+function statusLabel(status: MineralEvidenceStatus) {
+  if (status === "matched") return "confirmed";
+  if (status === "candidate") return "needs proof";
+  if (status === "partial") return "partial";
+  return "location only";
+}
+
 function StaffContent({ onBack }: { onBack: () => void }) {
+  const [query, setQuery] = React.useState("");
   const roomCounts = Object.entries(rooms).map(([id, room]) => ({
     id,
     ...room,
     stops: stops.filter((stop) => stop.roomId === id).length,
   }));
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredSpecimens = mineralSpecimenRecords.filter((record) => {
+    if (!normalizedQuery) return true;
+    return [
+      record.name,
+      record.displayLabel,
+      record.displayId,
+      record.id,
+      record.labelDetail ?? "",
+      record.evidence.join(" "),
+    ].some((value) => value.toLowerCase().includes(normalizedQuery));
+  });
+  const mineralStats = {
+    displays: mineralMapItems.length,
+    indexed: mineralSpecimenRecords.length,
+    confirmed: mineralSpecimenRecords.filter((record) => record.publicUse === "searchable").length,
+    gaps: mineralMissingShots.length,
+  };
 
   return (
     <section className="screen staff-screen">
@@ -627,13 +644,62 @@ function StaffContent({ onBack }: { onBack: () => void }) {
       <div className="intro-band compact">
         <div>
           <p className="kicker"><ClipboardList size={16} /> Content operating model</p>
-          <h1>Make the app beautiful now, map the building correctly next.</h1>
+          <h1>Mineral Hall exhibit reference.</h1>
           <p>
-            The prototype is intentionally content-driven. As Brendan builds the better physical map,
-            these stops can be swapped from seed zones to verified cases without redesigning the visitor flow.
+            Exhibit identities and indexed specimens are reconciled to the supplied walkthroughs and photographs.
+            The specimen inventory is not exhaustive; the route schematic is not a measured floor plan.
           </p>
         </div>
       </div>
+
+      <section className="knowledge-panel">
+        <div className="knowledge-header">
+          <div>
+            <p className="section-title">Mineral Hall evidence layer</p>
+            <h2>Search indexed specimens and exhibit records.</h2>
+          </div>
+          <label className="search-field">
+            <span>Search</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="datolite, Upper Darby, Case 1..."
+            />
+          </label>
+        </div>
+
+        <div className="knowledge-stats">
+          <span><strong>{mineralStats.displays}</strong> display markers</span>
+          <span><strong>{mineralStats.indexed}</strong> records</span>
+          <span><strong>{mineralStats.confirmed}</strong> confirmed/searchable</span>
+          <span><strong>{mineralStats.gaps}</strong> evidence reviews</span>
+        </div>
+
+        <div className="record-grid">
+          {filteredSpecimens.map((record) => (
+            <article className="record-card" key={record.id}>
+              <span className={`record-pill ${record.publicUse}`}>{record.publicUse}</span>
+              <h3>{record.name}</h3>
+              <p>{record.labelDetail ?? record.type}</p>
+              <small>{record.displayLabel} · {record.displayId}</small>
+              <small>{record.id} · {record.evidence.join(", ")}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="missing-shot-panel">
+        <p className="section-title">Saved-evidence review queue</p>
+        <div className="shot-list">
+          {mineralMissingShots.slice(0, 6).map((shot) => (
+            <article className="shot-row" key={`${shot.priority}-${shot.target}`}>
+              <strong>{shot.priority}</strong>
+              <span>{shot.target}</span>
+              <small>{shot.why}</small>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div className="staff-grid">
         {roomCounts.map((room) => (

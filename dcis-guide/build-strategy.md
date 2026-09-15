@@ -134,7 +134,7 @@ This creates the product skeleton while proving the risky AI pieces separately w
 7. Real OCR and image upload.
 8. Real AI guide response using approved content.
 9. Real vision/embedding matching for zones/highlights.
-10. Public/private mode separation.
+10. Public/private mode separation, including separate internal and consumer-facing map layers.
 
 ## Validation Workflows
 
@@ -148,6 +148,7 @@ The app needs these workflows validated before we treat the product direction as
 - Builder capture: turn staff walkthrough audio, photos, corrections, and labels into draft structured records.
 - Review/publish: make it easy for staff to approve, edit, reject, or mark content as private.
 - Blueprint refinement: let the map start rough and improve through corrected observations.
+- Map-layer validation: verify that staff/service areas appear in the internal map but are hidden or abstracted in the consumer-facing visitor map.
 - Latency: keep camera/OCR/guide responses fast enough for someone walking through the museum.
 - Engagement loop: prove that prompts, quests, and suggested next stops make visitors continue exploring.
 
