@@ -27,11 +27,15 @@ import {
 } from "./data";
 import {
   mineralMapItems,
+  mineralBrowseDisplays,
   mineralPublicNotice,
   specimensForDisplay,
 } from "./mineralHallKnowledge";
 import "./styles.css";
-import { Discovery, BuildingOrientation } from "./Discovery";
+import { MineralSpecimenCard } from "./MineralSpecimenCard";
+import { Discovery } from "./Discovery";
+import { FirstFloorMap } from "./FirstFloorMap";
+import "./foundation.css";
 
 type Phase = "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation";
 
@@ -48,16 +52,20 @@ type Progress = {
 const STORAGE_KEY = "dcis-expedition-progress-v2";
 
 function App() {
+  const [mapSelection, setMapSelection] = React.useState("entry");
   const [phase, setPhase] = React.useState<Phase>("choose-path");
+  React.useEffect(() => { window.scrollTo(0, 0); }, [phase]);
   const [selectedPathId, setSelectedPathId] = React.useState<PathId>("cabinet");
   const [selectedCharacterId, setSelectedCharacterId] = React.useState<Character["id"]>("naturalist");
   const [teamName, setTeamName] = React.useState("The Field Party");
   const [progress, setProgress] = React.useState<Progress | null>(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (!saved) return null;
-
     try {
-      return JSON.parse(saved) as Progress;
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (!saved) return null;
+      const value = JSON.parse(saved);
+      if (!value || !paths.some(p => p.id === value.pathId) || !characters.some(c => c.id === value.characterId) || typeof value.teamName !== 'string' || !Number.isInteger(value.stopIndex) || value.stopIndex < 0 || !Array.isArray(value.completed) || !Array.isArray(value.hinted) || !value.answers || typeof value.answers !== 'object' || Array.isArray(value.answers)) return null;
+      const ids = getPathStops(value.pathId).map(s => s.id);
+      return { ...value, stopIndex: Math.min(value.stopIndex, ids.length), completed: value.completed.filter((id: unknown) => typeof id === 'string' && ids.includes(id)), hinted: value.hinted.filter((id: unknown) => typeof id === 'string' && ids.includes(id)), answers: Object.fromEntries(Object.entries(value.answers).filter(([id, answer]) => ids.includes(id) && typeof answer === 'string')) } as Progress;
     } catch {
       return null;
     }
@@ -65,7 +73,7 @@ function App() {
 
   React.useEffect(() => {
     if (progress) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch { /* Device storage may be unavailable. */ }
     }
   }, [progress]);
 
@@ -92,7 +100,7 @@ function App() {
   }
 
   function resetProgress() {
-    window.localStorage.removeItem(STORAGE_KEY);
+    try { window.localStorage.removeItem(STORAGE_KEY); } catch { /* Keep in-memory reset usable. */ }
     setProgress(null);
     setPhase("choose-path");
   }
@@ -121,8 +129,8 @@ function App() {
         </nav>
       </header>
 
-      {phase === "choose-path" && <Discovery onMap={() => setPhase("map")} onPaths={() => setPhase("paths")} onOrientation={() => setPhase("orientation")} />}
-      {phase === "orientation" && <BuildingOrientation onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
+      {phase === "choose-path" && <Discovery onMap={(id = "entry") => { setMapSelection(id); setPhase("map"); }} onPaths={() => setPhase("paths")} onOrientation={() => setPhase("orientation")} />}
+      {phase === "orientation" && <FirstFloorMap onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
       {phase === "paths" && (
         <PathPicker
           selectedPathId={selectedPathId}
@@ -140,7 +148,7 @@ function App() {
           path={selectedPath}
           selectedCharacterId={selectedCharacterId}
           teamName={teamName}
-          onBack={() => setPhase("choose-path")}
+          onBack={() => setPhase("paths")}
           onTeamName={setTeamName}
           onCharacter={setSelectedCharacterId}
           onStart={startTour}
@@ -157,10 +165,10 @@ function App() {
       )}
 
       {phase === "recap" && progress && (
-        <Recap progress={progress} onRestart={resetProgress} onChoosePath={() => setPhase("choose-path")} />
+        <Recap progress={progress} onRestart={resetProgress} onChoosePath={() => setPhase("paths")} />
       )}
 
-      {phase === "map" && <MineralHallMap onBack={() => setPhase("choose-path")} />}
+      {phase === "map" && <MineralHallMap selectedId={mapSelection} onSelect={setMapSelection} onBack={() => setPhase("orientation")} onExplore={() => setPhase("choose-path")} />}
 
 
     </main>
@@ -268,6 +276,8 @@ function SetupFlow({
         </aside>
 
         <div className="setup-panel">
+          <button className="primary-action" onClick={onStart}>Start with defaults <ArrowRight size={20} /></button>
+          <p>Personalize your notebook below, or start now. These are self-guided observation prompts.</p>
           <label className="field-label">
             Name your expedition
             <input value={teamName} onChange={(event) => onTeamName(event.target.value)} />
@@ -365,7 +375,7 @@ function TourExperience({
 
       <div className="tour-layout">
         <section className="stop-visual">
-          <img src={stop.asset} alt="" />
+          <MapPinned size={64} aria-hidden="true" />
           <div className="room-overlay">
             <span>{stop.room}</span>
             <strong>{stop.zone}</strong>
@@ -507,35 +517,44 @@ function Recap({ progress, onRestart, onChoosePath }: { progress: Progress; onRe
   );
 }
 
-function MineralHallMap({ onBack }: { onBack: () => void }) {
-  const [selectedId, setSelectedId] = React.useState("entry");
-  const selected = mineralMapItems.find((item) => item.id === selectedId) ?? mineralMapItems[0];
-  const selectedSpecimens = specimensForDisplay(selected.displayId);
+function MineralHallMap({ onBack, onExplore, selectedId, onSelect }: { onBack: () => void; onExplore: () => void; selectedId: string; onSelect: (id: string) => void }) {
+  const [query, setQuery] = React.useState("");
+  const detail = React.useRef<HTMLElement>(null);
+  const board = React.useRef<HTMLDivElement>(null);
+  const allDisplays = [...mineralMapItems, ...mineralBrowseDisplays];
+  const selected = allDisplays.find((item) => item.id === selectedId) ?? mineralMapItems[0];
+  const selectedSpecimens = specimensForDisplay(selected.displayId).filter(record => record.type !== 'exhibit identity');
+  function setSelectedId(id: string) {
+    onSelect(id);
+    requestAnimationFrame(() => { detail.current?.scrollIntoView({block: 'start'}); detail.current?.focus({preventScroll:true}); });
+  }
+  React.useEffect(() => { if (selectedId !== 'entry') requestAnimationFrame(() => detail.current?.scrollIntoView({block: 'start'})); }, []);
+  const matches = allDisplays.filter(item => `${item.label} ${item.summary} ${specimensForDisplay(item.displayId).map(r => r.name).join(' ')}`.toLowerCase().includes(query.trim().toLowerCase()));
 
   return (
     <section className="screen map-screen">
-      <button className="text-button" onClick={onBack}><Home size={18} /> Back to visitor app</button>
+      <button className="text-button" onClick={onBack}><MapPinned size={18} /> Whole first floor</button>
+      <button className="text-button" onClick={onExplore}><Home size={18} /> Back to exploring</button>
       <div className="intro-band compact">
         <div>
           <p className="kicker"><MapPinned size={16} /> Mineral Hall map</p>
-          <h1>Explore the exhibit records.</h1>
-          <p>{mineralPublicNotice}</p>
-          <p>
-            Select a number to explore its display.
-            Paired numbers share a wall bay: 11 and 15 are wall displays; 12 and 14 are below them. Not to scale.
-          </p>
+          <h1>Mineral Hall</h1>
+          <p>Find a display. Meet its minerals. Look a little closer.</p>
+          <details className="map-notice"><summary>About this prototype & map</summary><p>{mineralPublicNotice}</p><p>Not to scale. 11 and 15 are wall displays; 12 and 14 are below them.</p></details>
         </div>
       </div>
 
       <div className="map-layout">
-        <div className="map-board" aria-label="Mineral Hall numbered exhibit map">
+        <div ref={board} className="map-board" aria-label="Mineral Hall numbered exhibit map">
+          <label className="browse-search">Search displays or minerals<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Try quartz, fluorescent, or 12" /></label>
+          {query && <div className="browse-results" aria-live="polite">{matches.length ? matches.map(item => <button key={item.id} onClick={() => setSelectedId(item.id)}>{item.label}<small>{item.summary.split('.')[0]}</small></button>) : <p>No match in this curated selection. Try a display number or another mineral.</p>}</div>}
           <svg viewBox="0 160 1000 920" role="img" aria-labelledby="mineral-map-title mineral-map-desc">
             <title id="mineral-map-title">Mineral Hall sketch-based exhibit map</title>
-            <desc id="mineral-map-desc">Room outline with a straight entrance-side wall, deeper recess, three doors and three windows. Wall displays 11 and 15 sit above floor displays 12 and 14. Display 17 stays on the window wall.</desc>
+            <desc id="mineral-map-desc">Room outline with a straight entrance-side wall, deeper recess, public entrance and connecting doorway, and three windows. Wall displays 11 and 15 sit above floor displays 12 and 14. Display 17 stays on the window wall.</desc>
             <path d="M70 230 H800 V1000 H400 V480 H180 V410 H70 Z" fill="#eef3ef" />
-            <path d="M650 230 H70 V410 H180 V480 H400 V850 M400 935 V1000 H465 M565 1000 H800 V230 H755" fill="none" stroke="#243e35" strokeWidth="7" strokeLinejoin="miter" />
-            <path d="M650 230 H755 M400 850 V935 M465 1000 H565" stroke="#a3571e" strokeWidth="3" strokeDasharray="7 6" />
-            <text className="map-marker-text" x="702" y="205">Door</text>
+            <path d="M800 230 H70 V410 H180 V480 H400 V850 M400 935 V1000 H465 M565 1000 H800 V230" fill="none" stroke="#243e35" strokeWidth="7" strokeLinejoin="miter" />
+            <path d="M400 850 V935 M465 1000 H565" stroke="#a3571e" strokeWidth="3" strokeDasharray="7 6" />
+
             <text className="map-marker-text" x="515" y="1040">Door</text>
             {[{y:285,h:100},{y:535,h:115},{y:805,h:90}].map(w => <g key={w.y}><rect className="map-window" x="788" y={w.y} width="24" height={w.h}/><text className="map-marker-text" x="862" y={w.y+w.h/2+6}>Window</text></g>)}
             <rect className="map-island" x="555" y="380" width="100" height="510" rx="50" />
@@ -546,7 +565,7 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
                 className={`map-item sketch-pin ${item.id === selected.id ? "selected" : ""}`}
                 onClick={() => setSelectedId(item.id)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") setSelectedId(item.id);
+                  if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedId(item.id); }
                 }}
                 role="button"
                 tabIndex={0}
@@ -557,19 +576,19 @@ function MineralHallMap({ onBack }: { onBack: () => void }) {
               </g>
             ))}
           </svg>
+          <div className="map-number-controls" role="group" aria-label="Choose a display">{mineralMapItems.map(item => <button key={item.id} aria-label={`Select ${item.label}`} aria-pressed={selectedId === item.id} onClick={() => setSelectedId(item.id)}>{item.id === "entry" ? "Entrance" : item.id === "shells" ? "Shells" : item.id}</button>)}</div>
+          <button className="island-browse" aria-pressed={selectedId === 'island'} onClick={() => setSelectedId('island')}>Explore the island collection</button>
         </div>
 
-        <aside className="map-detail">
+        <aside ref={detail} tabIndex={-1} className="map-detail" aria-live="polite">
+          <button className="text-button back-to-displays" onClick={() => { board.current?.scrollIntoView({block: "start"}); board.current?.querySelector("input")?.focus({preventScroll:true}); }}>Back to map & displays</button>
           <h2>{selected.label}</h2>
           <p>{selected.summary}</p>
           {selectedSpecimens.length > 0 && (
             <div className="map-specimens">
-              <strong>Indexed records</strong>
+              <strong>Discover this display</strong>
               {selectedSpecimens.map((record) => (
-                <article key={record.id}>
-                  <h3>{record.name}</h3>
-                  <p>{record.description ?? record.type}</p>
-                </article>
+                <MineralSpecimenCard key={record.id} record={record} />
               ))}
             </div>
           )}

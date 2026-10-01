@@ -350,28 +350,7 @@ export const stops: Stop[] = [
     nextCue: "Your expedition is ready to close.",
     tags: ["wonder", "recap", "third-floor"],
   },
-  {
-    id: "special-edge",
-    pathIds: ["hidden"],
-    title: "The Restricted Edge",
-    roomId: "special-collections",
-    room: "Special Collections",
-    zone: "Entrance-side connection",
-    asset: "/assets/historic-map.jpg",
-    icon: Archive,
-    duration: "3 min",
-    stand: "Use this only if Special Collections is visible or open for the visit.",
-    find: "Find a sign that some knowledge is preserved differently: closed, shelved, boxed, labeled, or handled carefully.",
-    prompt: "What does restricted access protect?",
-    choices: ["Fragile things", "Order", "Research value", "Security", "Future questions"],
-    hint: "Not everything valuable is displayed like a trophy. Some material matters because it can be studied later.",
-    revealTitle: "Preservation is active",
-    reveal:
-      "A scientific institute is not only what visitors can touch or photograph. It is also the quieter work of keeping fragile evidence available for future questions.",
-    stamp: "Careful Keeping",
-    nextCue: "Return to the public route and continue toward the Lecture Hall or third floor.",
-    tags: ["special-collections", "preservation", "hidden"],
-  },
+
 ];
 
 export const paths: TourPath[] = [
@@ -379,9 +358,9 @@ export const paths: TourPath[] = [
     id: "cabinet",
     name: "Cabinet of Wonders",
     shortName: "Wonders",
-    tagline: "The flagship all-ages discovery hunt",
+    tagline: "A self-guided observation walk",
     description:
-      "A polished first visit through minerals, public science, and the third-floor natural history payoff.",
+      "Observation prompts for minerals, public science, and natural history. Ask a guide which upper-floor areas are open today.",
     bestFor: "Families, first-time visitors, curious adults",
     time: "45-70 min",
     difficulty: "Medium",
@@ -407,7 +386,7 @@ export const paths: TourPath[] = [
     id: "hidden",
     name: "The Hidden Institute",
     shortName: "Hidden",
-    tagline: "A mystery/history route through the living old Institute",
+    tagline: "A reflective walk through science and local history",
     description:
       "Read rooms, cases, people, labels, and preservation choices as clues to why DCIS still matters.",
     bestFor: "Adults, donors, repeat visitors, local history people",
@@ -421,7 +400,6 @@ export const paths: TourPath[] = [
       "You reconstructed DCIS as a rare civic machine: part collection, part classroom, part memory system, and still available for new questions.",
     stopIds: [
       "place-evidence",
-      "special-edge",
       "public-science-room",
       "portrait-witnesses",
       "balcony-reveal",

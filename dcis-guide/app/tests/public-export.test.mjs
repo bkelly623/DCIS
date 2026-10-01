@@ -10,18 +10,17 @@ const data = JSON.parse(readFileSync(sourceURL, 'utf8'));
 
 test('deterministic export has no drift and preserves lookup coverage', () => {
   assert.equal(renderPublic(data), readFileSync(outputURL, 'utf8'));
-  assert.equal(data.records.length, 70);
-  assert.equal(data.records.filter(r => r.type === 'specimen/group label').length, 50);
-  assert.equal(data.records.filter(r => r.name === 'Shale').length, 2);
-  assert.equal(data.records.find(r => r.id === 'MH-SPEC-048').displayId, 'MH-DISP-012');
-  assert.equal(data.records.find(r => r.id === 'MH-SPEC-037').displayId, 'MH-DISP-018');
+  assert.equal(data.records.filter(r => r.images).length, 28);
+  for (const n of [1,2,3,4,5,6,7,8,9,11,12,18,19]) assert.equal(data.records.filter(r => r.images && r.displayId === `MH-DISP-${String(n).padStart(3,'0')}`).length, 2);
+  assert.equal(data.records.filter(r => r.images && r.displayId === 'MH-WORK-MINERAL-ISLAND').length, 2);
+  for (const r of data.records.filter(r => r.images)) for (const image of r.images) assert.ok(existsSync(new URL(`../public${image.src}`, import.meta.url)));
 });
 test('all map geometry is unchanged', () => {
   const geometry = data.mapItems.map(({id,x,y,width,height}) => ({id,x,y,width,height}));
   assert.deepEqual(geometry, JSON.parse(readFileSync(new URL('./map-geometry.json', import.meta.url))));
 });
 test('tentative identities remain qualified and uncertain locality is not exported', () => {
-  for (let n = 39; n <= 44; n++) assert.match(data.records.find(r => r.id === `MH-SPEC-0${n}`).description, /tentative/);
+  for (let n = 39; n <= 44; n++) assert.equal(data.records.find(r => r.id === `MH-SPEC-0${n}`), undefined);
   assert.equal(data.records.find(r => r.id === 'MH-SPEC-009').description, undefined);
   assert.ok(!JSON.stringify(data).includes('Quarry'));
 });

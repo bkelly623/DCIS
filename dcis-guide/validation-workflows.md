@@ -8,6 +8,19 @@ Validate risky capabilities in narrow slices using actual museum images, video f
 
 The first successful version does not need to recognize every specimen. It does need to reliably handle useful guide-level context: rooms, cases, zones, labels, highlight objects, and nearby next stops.
 
+## Source-Of-Truth Order For Mapping
+
+Every DCIS map artifact must follow this hierarchy before it is shown to Brendan or used in the app:
+
+1. Start from the current clean-copy blueprint for that floor. For first-floor work, the active source is `knowledge-base/blueprints/dcis-first-floor-clean-copy-v1.md`.
+2. Preserve explicit room-shape facts from the blueprint. For Mineral Hall, the room is a broad L-shaped public area; do not redraw it as a rectangle.
+3. Attach ordered photos to the clean-copy scaffold before drawing a new map.
+4. Separate evidence from placement. A photo can prove that a case/object exists without proving where it belongs geographically.
+5. Mark unplaced evidence as pending instead of converting it into a map anchor.
+6. Only show confirmed public-route/display anchors on the consumer-facing map. Keep staff/private areas and uncertain geometry out of that layer.
+
+Failure condition: a map that contradicts the clean-copy blueprint, simplifies an L-shaped room into a rectangle, or maps visible background cases as confirmed placement without Brendan's explicit placement must be superseded immediately.
+
 ## Workflows To Prove
 
 ### 1. Image To Zone
@@ -221,3 +234,11 @@ OPENAI_API_KEY=... npm run validate:image -- public/assets/mineral-tray.jpg "Min
 ```
 
 Results are written to `app/validation-results/`.
+
+## Mineral Hall local-preview acceptance (no publication)
+
+From `app`, run `npm run export:public`, `npm run build`, then `DCIS_UI_EVIDENCE=<private-evidence-directory> uv run --with playwright python scripts/check-public-ui.py`. The browser harness serves only `dist` on an ephemeral loopback port and shuts it down afterward; no public server, tunnel or deployment is required.
+
+The browser contract covers 390px and 1440px: whole-first-floor landing, public orientation and keyboard/44px controls, every mapped destination, exact record IDs/names and display joins, every selected photograph decoded, normal/UV switching, every Look closer prompt, unnumbered island, whole-floor return, discovery detour/reward/reload persistence, and existing tour entry. It checks card-internal and page horizontal overflow, console/runtime/network errors, and desktop map/detail alignment. Current local selection has 28 photo cards and 29 sanitized image assets, not a collection census.
+
+Inspect the actual saved first-floor, detail, island, Scheelite and Malachite screenshots. Passing assertions do not establish interpretive quality or institutional approval. Source photographs, private selection manifest and editorial provenance remain outside the app. Build checks retain closed-schema/privacy rejection, immutable map geometry, exact selections, generated-export drift and emitted-bundle scanning. This preview does not implement live vision, AI conversation, volunteer authentication or approval workflows.
