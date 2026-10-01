@@ -44,8 +44,12 @@ def check_cards(page, display_id, size):
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
-server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(QuietHandler, directory=str(APP / 'dist')))
-threading.Thread(target=server.serve_forever, daemon=True).start()
+server = None
+url = os.environ.get('DCIS_URL')
+if not url:
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(QuietHandler, directory=str(APP / 'dist')))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    url = f'http://127.0.0.1:{server.server_port}'
 try:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
@@ -56,7 +60,7 @@ try:
             page.on('console', lambda msg: errors.append(msg.text) if msg.type == 'error' else None)
             page.on('requestfailed', lambda req: errors.append(f'Failed request: {req.url}'))
             page.on('response', lambda response: errors.append(f'HTTP {response.status}: {response.url}') if response.status >= 400 else None)
-            page.goto(f'http://127.0.0.1:{server.server_port}', wait_until='networkidle')
+            page.goto(url, wait_until='networkidle')
             page.screenshot(path=str(OUT / f'home-{size}.png'), full_page=True)
             page.get_by_role('button', name='Map', exact=True).click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
@@ -108,35 +112,36 @@ try:
             page.get_by_role('button', name='Whole first floor').click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
-            page.get_by_role('button', name=re.compile('Museum map')).click()
+            page.get_by_role('button', name='Open first-floor map', exact=True).click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
-            # Existing discovery, map detour, reward and persistence are unchanged.
-            page.get_by_role('button', name=re.compile('Find my first discovery')).click()
-            page.get_by_role('button', name='Different minerals might glow.').click()
-            page.get_by_role('button', name='Find Case 4 on the map').click()
+            # The guide/mystery replace the retired badge activity and path picker.
+            # Preserve equivalent persistence and map-return assertions here;
+            # check-experiences-ui.py additionally exhausts every stop and choice.
+            page.locator('a[href="#mystery/find"]').click()
+            choice = page.get_by_role('button', name='I think I have it', exact=True)
+            choice.click()
+            response = page.locator('.experience-response').inner_text()
+            page.get_by_role('button', name='Find on Map 4', exact=True).click()
             assert page.locator('.map-detail h2').inner_text() == '4 Fluorescent'
             page.get_by_role('button', name='Whole first floor').click()
-            page.get_by_role('button', name='Back to exploring', exact=True).click()
-            page.get_by_role('heading', name=re.compile('steal the spotlight')).wait_for()
-            assert 'chosen' in page.get_by_role('button', name='Different minerals might glow.').get_attribute('class')
-            page.get_by_role('button', name='Different minerals might glow.').click()
-            page.get_by_role('button', name=re.compile('Test my guess')).click()
-            page.get_by_role('button', name=re.compile('I spotted the glow')).click()
-            assert page.evaluate("localStorage.getItem('dcis-glow-discovery-v1')") == 'yes'
+            page.get_by_role('link', name='Continue', exact=True).click()
+            assert choice.get_attribute('aria-pressed') == 'true'
+            assert page.locator('.experience-response').inner_text() == response
             page.reload()
-            assert page.get_by_text('Glow Detective is in your collection.', exact=False).is_visible()
-            page.get_by_role('button', name=re.compile('Make a day of it')).click()
-            assert page.locator('.path-grid button').count() == 3
-            page.locator('.path-grid button').first.click()
-            page.get_by_role('button', name='Back to paths', exact=True).click()
-            assert page.locator('.path-grid button').count() == 3
-            page.locator('.path-grid button').first.click()
-            page.get_by_role('button', name='Start with defaults', exact=False).click()
-            title = page.locator('.stop-panel h1').inner_text()
+            assert choice.get_attribute('aria-pressed') == 'true'
+            assert page.locator('.experience-response').inner_text() == response
+            page.get_by_role('button', name='Continue →', exact=True).click()
+            assert page.url.endswith('/observe')
+            page.get_by_role('link', name='Guide stop list', exact=True).click()
+            page.locator('.experience-stop-list li').first.wait_for()
+            assert page.locator('.experience-stop-list li').count() == 5
+            page.locator('.experience-stop-list a').first.click()
+            page.locator('.experience-location').wait_for()
+            title = page.locator('.experience h1').inner_text()
             page.get_by_role('button', name='Map', exact=True).click()
-            page.get_by_role('button', name='Continue', exact=True).click()
-            assert page.locator('.stop-panel h1').inner_text() == title
+            page.get_by_role('link', name='Continue', exact=True).click()
+            assert page.locator('.experience h1').inner_text() == title
             page.get_by_role('button', name='Map', exact=True).click()
             page.get_by_role('button', name='Mineral Hall — open exhibit map', exact=True).click()
             page.get_by_role('searchbox').fill('scheelite')
@@ -149,7 +154,8 @@ try:
             page.close()
         assert not errors, errors
         browser.close()
-        print(f'Public UI passed at 390 and 1440: visual map entry, public-only areas, keyboard/44px controls, {len(DATA["mapItems"])} selections and {len(DATA["records"])} records per viewport, return paths, discovery/reward persistence, 3 existing tours; no overflow or runtime errors. Screenshots: {OUT}')
+        print(f'Public UI passed at 390 and 1440: visual map entry, public-only areas, keyboard/44px controls, {len(DATA["mapItems"])} selections and {len(DATA["records"])} records per viewport, return paths, guide/mystery response persistence and 5-stop selector; no overflow or runtime errors. Screenshots: {OUT}')
 finally:
-    server.shutdown()
-    server.server_close()
+    if server:
+        server.shutdown()
+        server.server_close()

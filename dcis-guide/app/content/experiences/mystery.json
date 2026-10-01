@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "id": "hidden-appearance",
+  "title": "Hidden Appearance",
+  "subtitle": "One specimen. Two lights. What stays the same?",
+  "location": {
+    "displayId": "MH-DISP-004",
+    "name": "Fluorescent Mineral Collection",
+    "mapNumber": "4",
+    "physicalSticker": "3"
+  },
+  "objectIds": [
+    "DCIS-WR-000037"
+  ],
+  "entryNodeId": "find",
+  "safety": "Leave the cabinet closed. Only a trained docent may operate it. This experience uses recorded photographs and does not switch the cabinet lights.",
+  "nodes": [
+    {
+      "id": "find",
+      "kind": "choice",
+      "title": "Find the rock with a second appearance",
+      "text": "Look for the Scheelite label in the fluorescent collection. In this photographed arrangement it is at the left of the upper row. Match the broad pale patches against dark rough material. The photo is your reference, not a test of your mineral knowledge.",
+      "image": {
+        "objectId": "DCIS-WR-000037",
+        "src": "/assets/mineral-hall/DCIS-WR-000037-normal.webp",
+        "alt": "Scheelite — photographed display detail",
+        "label": "Normal light"
+      },
+      "choices": [
+        {
+          "id": "found",
+          "label": "I think I have it",
+          "response": "Keep that specimen in view. Choose a patch to follow before we change the light in the photos.",
+          "next": "observe"
+        },
+        {
+          "id": "photo",
+          "label": "I can’t find it — use the photo",
+          "response": "The photo gives you the same investigation without finding the cabinet specimen. Start with one pale patch on this image.",
+          "next": "observe"
+        },
+        {
+          "id": "skip",
+          "label": "Skip finding it",
+          "response": "You can go straight to a prediction using the reference photo. No observation is being checked or credited.",
+          "next": "predict"
+        }
+      ]
+    },
+    {
+      "id": "observe",
+      "kind": "choice",
+      "title": "Give your eye an anchor",
+      "text": "Choose a feature you can recognize again. When the light changes, color may be the least reliable thing to follow.",
+      "image": {
+        "objectId": "DCIS-WR-000037",
+        "src": "/assets/mineral-hall/DCIS-WR-000037-normal.webp",
+        "alt": "Scheelite — photographed display detail",
+        "label": "Normal light"
+      },
+      "choices": [
+        {
+          "id": "pale",
+          "label": "A pale patch",
+          "response": "Follow its uneven boundary against the dark material. Watch whether that area stands out differently in the UV photograph.",
+          "next": "predict"
+        },
+        {
+          "id": "dark",
+          "label": "The dark material between patches",
+          "response": "Keep the darker center in mind. It will give you a contrast against the areas that brighten.",
+          "next": "predict"
+        },
+        {
+          "id": "outline",
+          "label": "The outer shape",
+          "response": "Follow the high points along the upper edge and the right-hand outline. Shape helps connect two views even when their lighting differs.",
+          "next": "predict"
+        },
+        {
+          "id": "unclear",
+          "label": "I’m not sure what I can see",
+          "response": "Use the overall contrast: pale areas on a dark rough specimen. You do not need to identify a mineral by sight to make the comparison.",
+          "next": "predict"
+        }
+      ]
+    },
+    {
+      "id": "predict",
+      "kind": "choice",
+      "title": "What would surprise you most?",
+      "text": "Imagine the UV light is on. Which possibility do you want to investigate? This is a prediction, not a scored question.",
+      "image": {
+        "objectId": "DCIS-WR-000037",
+        "src": "/assets/mineral-hall/DCIS-WR-000037-normal.webp",
+        "alt": "Scheelite — photographed display detail",
+        "label": "Normal light"
+      },
+      "choices": [
+        {
+          "id": "whole",
+          "label": "The whole rock becomes one bright color",
+          "response": "Look for uniformity in the reveal. Do all parts brighten alike, or do contrasting areas remain?",
+          "next": "reveal"
+        },
+        {
+          "id": "patches",
+          "label": "Only some patches light up",
+          "response": "Follow a pale patch through the change. Does the glow spread evenly across the rock, or keep a patchy pattern?",
+          "next": "reveal"
+        },
+        {
+          "id": "subtle",
+          "label": "It still looks much the same",
+          "response": "Use the shape as your anchor and compare the contrast. Even when the rock stays put, a change in illumination can change what catches your eye.",
+          "next": "reveal"
+        },
+        {
+          "id": "no-prediction",
+          "label": "Show me without a prediction",
+          "response": "No guess needed. Switch between the two photos and let the difference be the starting point.",
+          "next": "reveal"
+        }
+      ]
+    },
+    {
+      "id": "reveal",
+      "kind": "image-toggle",
+      "title": "Same specimen. A new view.",
+      "text": "Tap UV light to reveal the recorded view. Switch back to Normal light whenever you like. Follow your chosen patch or outline across both photographs.",
+      "initialState": "normal",
+      "states": [
+        {
+          "id": "normal",
+          "label": "Normal light",
+          "image": {
+            "objectId": "DCIS-WR-000037",
+            "src": "/assets/mineral-hall/DCIS-WR-000037-normal.webp",
+            "alt": "Scheelite — photographed display detail",
+            "label": "Normal light"
+          },
+          "caption": "Recorded normal-light view: pale patches against dark rough material."
+        },
+        {
+          "id": "uv",
+          "label": "UV light",
+          "image": {
+            "objectId": "DCIS-WR-000037",
+            "src": "/assets/mineral-hall/DCIS-WR-000037-uv.webp",
+            "alt": "Scheelite photographed under ultraviolet illumination",
+            "label": "UV light"
+          },
+          "caption": "Recorded UV view: bright blue areas contrast with darker material."
+        }
+      ],
+      "comparisonNote": "These are two photographs of the same specimen, not a live camera or a simulated color filter. Framing differs, and photographed colors may differ from what you see in person.",
+      "choices": [
+        {
+          "id": "patchy",
+          "label": "The glow picks out patches",
+          "response": "Yes—the recorded comparison shows pale patches glowing blue while darker areas remain. Your patch is a useful way to follow the change.",
+          "next": "explain"
+        },
+        {
+          "id": "shape",
+          "label": "The shape helps me match the views",
+          "response": "That is a useful comparison: the rough outline connects the views while the bright blue regions change the balance of light and dark.",
+          "next": "explain"
+        },
+        {
+          "id": "hard",
+          "label": "It’s hard to compare",
+          "response": "The photos differ in framing. Start with the broad blue region at the right in the UV view, then find the pale region at the right in normal light. Or continue with the description below.",
+          "next": "explain"
+        },
+        {
+          "id": "skip-reveal",
+          "label": "Continue without comparing",
+          "response": "The recorded comparison shows pale patches glowing blue against darker material. You can understand the explanation without making a visual comparison.",
+          "next": "explain"
+        }
+      ]
+    },
+    {
+      "id": "explain",
+      "kind": "reading",
+      "title": "The rock is giving light back",
+      "text": "Under UV illumination, parts of this specimen emit visible blue light. That is fluorescence: absorbed energy excites electrons, and light is released as they return to lower energy states. The blue is not a painted-on layer being uncovered. Changing the illumination reveals a property of the material.",
+      "deeper": {
+        "label": "Why scheelite?",
+        "text": "The label identifies scheelite. Its characteristic blue fluorescence is connected to tungstate in its own chemical structure—not every fluorescent mineral needs a trace impurity to glow. A blue glow alone is not enough to identify an unknown mineral. These photos show the specimen during illumination, not a test of how long it glows afterward."
+      },
+      "next": "takeaway",
+      "nextLabel": "Take this way of looking with you"
+    },
+    {
+      "id": "takeaway",
+      "kind": "finish",
+      "title": "“Ordinary” depends on how you look",
+      "text": "You have reached the end of the photo comparison. The same specimen can look very different under different illumination, while its shape gives you a way to recognize it. Whether you found it in the cabinet or explored the photographs, the useful question is the same: what changes when the conditions change?",
+      "actions": [
+        {
+          "label": "Look again",
+          "nodeId": "reveal"
+        },
+        {
+          "label": "Explore the Mineral Hall guide",
+          "experienceId": "mineral-hall-guide",
+          "stopId": "smith"
+        },
+        {
+          "label": "Find a local mineral next",
+          "experienceId": "mineral-hall-guide",
+          "stopId": "local",
+          "displayId": "MH-DISP-003"
+        }
+      ]
+    }
+  ]
+}

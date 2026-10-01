@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "id": "mineral-hall-guide",
+  "title": "Mineral Hall: Look beyond the sparkle",
+  "subtitle": "Five stops, from a founder’s collection to a hidden blue glow.",
+  "introduction": "Welcome to the Arndt Mineral Hall, named for former DCIS president Harold W. Arndt. Start with a patch of green, meet a specimen labelled from nearby Mineral Hill, then look at stone as a building material, a surprising form of quartz, and finally a source of light. Follow the whole guide or choose any stop.",
+  "orientation": "Numbers here are app map markers, not cabinet stickers. Use the collection name first; a physical sticker is listed separately when known. The stop order is a suggested story, not turn-by-turn directions.",
+  "safety": "Look from outside the cases. Please leave cabinets and drawers closed and specimens in place. Only a trained docent may operate the fluorescent cabinet; the photographs let you explore it without a demonstration.",
+  "startStopId": "smith",
+  "stops": [
+    {
+      "id": "smith",
+      "title": "A founder’s collection, a changing mineral",
+      "location": {
+        "displayId": "MH-DISP-011",
+        "name": "Dr. George Smith Collection",
+        "mapNumber": "11",
+        "physicalSticker": null
+      },
+      "objectIds": [
+        "DCIS-WR-000389"
+      ],
+      "images": [
+        {
+          "objectId": "DCIS-WR-000389",
+          "src": "/assets/mineral-hall/DCIS-WR-000389-normal.webp",
+          "alt": "MALACHITE — photographed display detail"
+        }
+      ],
+      "introduction": "The cabinet heading connects this collection with Dr. George Smith, one of the Institute’s founders. Begin with something small enough to miss: green mottling on a rough rock.",
+      "find": "Find the wall cabinet headed Dr. George Smith Collection, map 11—not the large specimens below it at map 12. Look for the MALACHITE card on the top specimen shelf, at the left.",
+      "observation": "Follow one green patch across the rough face. Where does it fade into the darker surface? Look at the patch, not only the outline of the whole rock.",
+      "objectStory": "The card names malachite. Malachite is a copper mineral: it commonly forms where reactions near the ground surface change earlier copper-bearing material. That is a way to read this green surface—as a mineral feature, not just decoration.",
+      "hallContext": "The collection’s connection to a founder is the cabinet’s story. It does not tell us when Smith acquired this particular specimen or how this particular green surface formed.",
+      "deeper": {
+        "label": "A little deeper",
+        "text": "An attractive specimen need not be a perfect crystal. Mottling and coatings can also be useful things to describe. The mineral’s general formation process offers a possibility to understand; it is not a reconstruction of this rock’s individual history."
+      },
+      "notFound": {
+        "label": "Can’t find it?",
+        "text": "Use the photograph to explore the same specimen, or move to the next stop. There is no need to open a cabinet or move anything."
+      },
+      "nextStopId": "local",
+      "nextDestination": "Minerals from Pennsylvania"
+    },
+    {
+      "id": "local",
+      "title": "A little of Mineral Hill, inside one rock",
+      "location": {
+        "displayId": "MH-DISP-003",
+        "name": "Minerals from Pennsylvania",
+        "mapNumber": "3",
+        "physicalSticker": "1"
+      },
+      "objectIds": [
+        "DCIS-WR-000082"
+      ],
+      "images": [
+        {
+          "objectId": "DCIS-WR-000082",
+          "src": "/assets/mineral-hall/DCIS-WR-000082-normal.webp",
+          "alt": "Beryl & Microcline — photographed display detail"
+        }
+      ],
+      "introduction": "You do not need a distant mountain range for a mineral story. This specimen’s card points to Mineral Hill in Delaware County.",
+      "find": "Use map 3, Minerals from Pennsylvania. The physical cabinet sticker is 1. Look on the top shelf toward the left for Beryl & Microcline: blue-green prisms rising from a pinkish-brown block.",
+      "observation": "Choose one long prism and follow a flat face down to where it enters the host rock. Then look for the other prominent prism. The crystals and their host belong to one displayed specimen.",
+      "objectStory": "The card reads Beryl & Microcline and names Mineral Hill, Delaware County. Beryl commonly forms prisms; microcline is a feldspar. Here, two mineral names help describe the contrasting forms within one specimen.",
+      "hallContext": "Mineral Hill, just west of Media, became known to collectors for diverse minerals in a small area. That broader local story does not establish who collected this piece or when.",
+      "deeper": {
+        "label": "A little deeper",
+        "text": "A locality on a card and a feature you can see answer different questions: where the specimen is reported to come from, and what it looks like now. Blue-green color alone does not establish a gemstone variety or value."
+      },
+      "notFound": {
+        "label": "Can’t find it?",
+        "text": "Use the photograph to explore the same specimen, or move to the next stop. There is no need to open a cabinet or move anything."
+      },
+      "nextStopId": "stone",
+      "nextDestination": "Local Building Stones"
+    },
+    {
+      "id": "stone",
+      "title": "Read a stone’s cut face",
+      "location": {
+        "displayId": "MH-DISP-002",
+        "name": "Local Building Stones",
+        "mapNumber": "2",
+        "physicalSticker": null
+      },
+      "objectIds": [
+        "DCIS-WR-000060",
+        "DCIS-WR-000061"
+      ],
+      "images": [
+        {
+          "objectId": "DCIS-WR-000060",
+          "src": "/assets/mineral-hall/DCIS-WR-000060-normal.webp",
+          "alt": "Granite — circular sample — photographed display detail"
+        },
+        {
+          "objectId": "DCIS-WR-000061",
+          "src": "/assets/mineral-hall/DCIS-WR-000061-normal.webp",
+          "alt": "Amphibolite gneiss — circular sample — photographed display detail"
+        }
+      ],
+      "introduction": "Here, a simple change of shape makes comparison easier. Two circular samples let you look into rock rather than around a rough exterior.",
+      "find": "Find Local Building Stones at map 2. In the upper part of the cabinet, match the circular samples labelled GRANITE and AMPHIBOLITE GNEISS to these photographs.",
+      "observation": "On the granite, pick out pale grains and dark flecks. Now compare the light and dark zones of the amphibolite gneiss. Does your eye follow individual patches, or longer areas? Glass reflections may cross the surface; use the photos if needed.",
+      "objectStory": "The two samples have similar cut shapes but different textures. The granite’s pale grains and dark flecks stand out against the uneven light and dark areas in the amphibolite gneiss. The cut surface helps make that comparison.",
+      "hallContext": "Delaware County had active stone quarries, granite pits, and small mineral mines. This is the wider setting for a building-stone collection—not proof that either sample came from a named local quarry or a particular building.",
+      "deeper": {
+        "label": "A little deeper",
+        "text": "Separate preparation from geology: the circular outline is the sample’s prepared shape; the grains and zones inside it are features of the rock. Similar shapes do not mean the same rock, and a shared rock name would not prove a shared source."
+      },
+      "notFound": {
+        "label": "Can’t find it?",
+        "text": "Use the photograph to explore the same specimen, or move to the next stop. There is no need to open a cabinet or move anything."
+      },
+      "nextStopId": "world",
+      "nextDestination": "Minerals from World-Wide"
+    },
+    {
+      "id": "world",
+      "title": "Quartz without the crystal points",
+      "location": {
+        "displayId": "MH-DISP-007",
+        "name": "Minerals from World-Wide",
+        "mapNumber": "7",
+        "physicalSticker": "2"
+      },
+      "objectIds": [
+        "DCIS-WR-000201",
+        "DCIS-WR-000202"
+      ],
+      "images": [
+        {
+          "objectId": "DCIS-WR-000201",
+          "src": "/assets/mineral-hall/DCIS-WR-000201-normal.webp",
+          "alt": "Rose Quartz — photographed display detail"
+        },
+        {
+          "objectId": "DCIS-WR-000202",
+          "src": "/assets/mineral-hall/DCIS-WR-000202-normal.webp",
+          "alt": "Dover Flint — photographed display detail"
+        }
+      ],
+      "introduction": "If “quartz” makes you picture a pointed crystal, let this pink mass interrupt the picture.",
+      "find": "Find Minerals from World-Wide at map 7; its physical sticker is 2. Look for the large pink Rose Quartz on the top shelf, then the pale Dover Flint slab with dark rounded areas.",
+      "observation": "First trace the rough outline of the rose quartz. Then follow the edge of one dark rounded area in the flint. Neither presents the familiar spray of separate pointed crystals.",
+      "objectStory": "Rose quartz is a color variety of quartz, not a different mineral species. Flint belongs to the fine-grained silica family: its crystals can be too small to distinguish with your eyes. A familiar mineral can have an unfamiliar appearance.",
+      "hallContext": "The worldwide collection invites comparison across places, but its heading is not each specimen’s origin. These cards read Paris, Maine for the rose quartz and Gloucester, New Jersey for the Dover Flint.",
+      "deeper": {
+        "label": "A little deeper",
+        "text": "A useful description keeps scale in mind. A specimen can lack visible crystal points without lacking a crystalline structure. Describe the mass you can see, then let the mineral name tell you more than its silhouette alone."
+      },
+      "notFound": {
+        "label": "Can’t find it?",
+        "text": "Use the photograph to explore the same specimen, or move to the next stop. There is no need to open a cabinet or move anything."
+      },
+      "nextStopId": "light",
+      "nextDestination": "Fluorescent Mineral Collection"
+    },
+    {
+      "id": "light",
+      "title": "The appearance you cannot see yet",
+      "location": {
+        "displayId": "MH-DISP-004",
+        "name": "Fluorescent Mineral Collection",
+        "mapNumber": "4",
+        "physicalSticker": "3"
+      },
+      "objectIds": [
+        "DCIS-WR-000037"
+      ],
+      "images": [
+        {
+          "objectId": "DCIS-WR-000037",
+          "src": "/assets/mineral-hall/DCIS-WR-000037-normal.webp",
+          "alt": "Scheelite — photographed display detail",
+          "label": "Normal light"
+        }
+      ],
+      "introduction": "This last stop changes the light instead of the rock. Scheelite has a second appearance waiting in the recorded UV photograph.",
+      "find": "Find the Fluorescent Mineral Collection at map 4, physical sticker 3. In the photographed arrangement, Scheelite is at the left of the upper row: a dark rough specimen with broad pale patches.",
+      "observation": "In normal light—or in the normal-light photograph—pick one pale patch and trace its edge against the darker material. Hold that shape in mind before opening the mystery.",
+      "objectStory": "The paired photographs show pale patches glowing blue under UV illumination. The specimen has not been replaced: the light reveals a property that ordinary illumination does not show in the same way.",
+      "hallContext": "Fluorescent minerals are one of the hall’s featured collections. You can explore this one completely through the recorded photographs; a live demonstration is not required.",
+      "deeper": {
+        "label": "A little deeper",
+        "text": "Fluorescence is visible light emitted after a material absorbs energy. In the docent explanation, UV excites electrons; as they return to lower energy states, light is released. Only a trained docent operates the cabinet."
+      },
+      "notFound": {
+        "label": "Can’t find it?",
+        "text": "Use the photograph to explore the same specimen, or continue to Hidden Appearance. There is no need to open a cabinet or move anything."
+      },
+      "nextStopId": "end",
+      "nextDestination": "Hidden Appearance — a fluorescent-mineral mystery"
+    }
+  ],
+  "finish": {
+    "title": "Keep the habit of looking twice",
+    "text": "A patch, a prism, a grain, a rough mass: each gave you a different way into a mineral. The next time a rock looks ordinary, change the question you ask of it.",
+    "primaryAction": {
+      "label": "Try Hidden Appearance",
+      "experienceId": "hidden-appearance"
+    },
+    "secondaryAction": {
+      "label": "Choose another stop",
+      "destination": "guide-stop-list"
+    }
+  }
+}

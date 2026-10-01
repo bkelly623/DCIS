@@ -33,11 +33,11 @@ import {
 } from "./mineralHallKnowledge";
 import "./styles.css";
 import { MineralSpecimenCard } from "./MineralSpecimenCard";
-import { Discovery } from "./Discovery";
+import { ExperienceHome, Experiences, resumeExperience } from "./Experiences";
 import { FirstFloorMap } from "./FirstFloorMap";
 import "./foundation.css";
 
-type Phase = "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation";
+type Phase = "experience" | "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation";
 
 type Progress = {
   teamName: string;
@@ -53,7 +53,11 @@ const STORAGE_KEY = "dcis-expedition-progress-v2";
 
 function App() {
   const [mapSelection, setMapSelection] = React.useState("entry");
-  const [phase, setPhase] = React.useState<Phase>("choose-path");
+  const [route, setRoute] = React.useState(window.location.hash || '#home');
+  const phaseFromHash = (hash:string): Phase => hash.startsWith('#guide/') || hash.startsWith('#mystery/') ? 'experience' : hash === '#map' ? 'orientation' : hash === '#browse' ? 'map' : 'choose-path';
+  const [phase, updatePhase] = React.useState<Phase>(()=>phaseFromHash(window.location.hash));
+  const setPhase = (value:Phase) => { window.location.hash = value === 'orientation' ? 'map' : value === 'map' ? 'browse' : 'home'; updatePhase(value); };
+  React.useEffect(()=>{const change=()=>{setRoute(window.location.hash);updatePhase(phaseFromHash(window.location.hash));};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[]);
   React.useEffect(() => { window.scrollTo(0, 0); }, [phase]);
   const [selectedPathId, setSelectedPathId] = React.useState<PathId>("cabinet");
   const [selectedCharacterId, setSelectedCharacterId] = React.useState<Character["id"]>("naturalist");
@@ -116,12 +120,7 @@ function App() {
           </span>
         </button>
         <nav aria-label="App sections">
-          {progress && (
-            <button className="ghost-button" onClick={continueSaved}>
-              <BookOpen size={18} />
-              Continue
-            </button>
-          )}
+          {(phase === 'map' || phase === 'orientation') && <a className="ghost-button" href={resumeExperience()}>Continue</a>}
           <button className="ghost-button" onClick={() => setPhase("orientation")}>
             <MapPinned size={18} />
             Map
@@ -129,7 +128,9 @@ function App() {
         </nav>
       </header>
 
-      {phase === "choose-path" && <Discovery onMap={(id = "entry") => { setMapSelection(id); setPhase("map"); }} onPaths={() => setPhase("paths")} onOrientation={() => setPhase("orientation")} />}
+      {phase === "choose-path" && <ExperienceHome onBrowse={() => setPhase('map')} onMap={() => setPhase('orientation')} />}
+      {phase === 'experience' && <Experiences route={route} onMap={id=>{setMapSelection(id);setPhase('map');}} />}
+      {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href={resumeExperience()}>← Resume guide / mystery</a></div>}
       {phase === "orientation" && <FirstFloorMap onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
       {phase === "paths" && (
         <PathPicker
