@@ -62,7 +62,7 @@ try:
             page.on('response', lambda response: errors.append(f'HTTP {response.status}: {response.url}') if response.status >= 400 else None)
             page.goto(url, wait_until='networkidle')
             page.screenshot(path=str(OUT / f'home-{size}.png'), full_page=True)
-            page.get_by_role('button', name='Map', exact=True).click()
+            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Map', exact=True).click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             assert page.locator('.public-floor-plan').is_visible()
             assert page.get_by_role('button', name='Floor 1', exact=True).count() == 0
@@ -112,7 +112,7 @@ try:
             page.get_by_role('button', name='Whole first floor').click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
-            page.get_by_role('button', name='Open first-floor map', exact=True).click()
+            page.get_by_role('button', name='02 / Find your way', exact=False).click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
             # The guide/mystery replace the retired badge activity and path picker.
@@ -125,7 +125,7 @@ try:
             page.get_by_role('button', name='Find on Map 4', exact=True).click()
             assert page.locator('.map-detail h2').inner_text() == '4 Fluorescent'
             page.get_by_role('button', name='Whole first floor').click()
-            page.get_by_role('link', name='Continue', exact=True).click()
+            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Your guide', exact=True).click()
             assert choice.get_attribute('aria-pressed') == 'true'
             assert page.locator('.experience-response').inner_text() == response
             page.reload()
@@ -139,10 +139,10 @@ try:
             page.locator('.experience-stop-list a').first.click()
             page.locator('.experience-location').wait_for()
             title = page.locator('.experience h1').inner_text()
-            page.get_by_role('button', name='Map', exact=True).click()
-            page.get_by_role('link', name='Continue', exact=True).click()
+            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Map', exact=True).click()
+            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Your guide', exact=True).click()
             assert page.locator('.experience h1').inner_text() == title
-            page.get_by_role('button', name='Map', exact=True).click()
+            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Map', exact=True).click()
             page.get_by_role('button', name='Mineral Hall — open exhibit map', exact=True).click()
             page.get_by_role('searchbox').fill('scheelite')
             page.locator('.browse-results button').click()

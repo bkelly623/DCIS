@@ -33,11 +33,13 @@ import {
 } from "./mineralHallKnowledge";
 import "./styles.css";
 import { MineralSpecimenCard } from "./MineralSpecimenCard";
+import { Collection } from "./Collection";
 import { ExperienceHome, Experiences, resumeExperience } from "./Experiences";
 import { FirstFloorMap } from "./FirstFloorMap";
 import "./foundation.css";
+import "./museum.css";
 
-type Phase = "experience" | "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation";
+type Phase = "experience" | "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation" | "collection";
 
 type Progress = {
   teamName: string;
@@ -52,11 +54,12 @@ type Progress = {
 const STORAGE_KEY = "dcis-expedition-progress-v2";
 
 function App() {
-  const [mapSelection, setMapSelection] = React.useState("entry");
+  const [mapSelection, setMapSelection] = React.useState(()=>window.location.hash.startsWith('#map/minerals/')?window.location.hash.split('/')[2]:'entry');
   const [route, setRoute] = React.useState(window.location.hash || '#home');
-  const phaseFromHash = (hash:string): Phase => hash.startsWith('#guide/') || hash.startsWith('#mystery/') ? 'experience' : hash === '#map' ? 'orientation' : hash === '#browse' ? 'map' : 'choose-path';
+  const phaseFromHash = (hash:string): Phase => hash.startsWith('#guide/') || hash.startsWith('#mystery/') ? 'experience' : hash === '#map' ? 'orientation' : hash.startsWith('#map/minerals') ? 'map' : hash === '#browse' ? 'collection' : 'choose-path';
   const [phase, updatePhase] = React.useState<Phase>(()=>phaseFromHash(window.location.hash));
-  const setPhase = (value:Phase) => { window.location.hash = value === 'orientation' ? 'map' : value === 'map' ? 'browse' : 'home'; updatePhase(value); };
+  const setPhase = (value:Phase) => { window.location.hash = value === 'orientation' ? 'map' : value === 'map' ? `map/minerals/${mapSelection}` : value === 'collection' ? 'browse' : 'home'; updatePhase(value); };
+  React.useEffect(()=>{if(route.startsWith('#map/minerals/'))setMapSelection(route.split('/')[2]);},[route]);
   React.useEffect(()=>{const change=()=>{setRoute(window.location.hash);updatePhase(phaseFromHash(window.location.hash));};window.addEventListener('hashchange',change);return()=>window.removeEventListener('hashchange',change);},[]);
   React.useEffect(() => { window.scrollTo(0, 0); }, [phase]);
   const [selectedPathId, setSelectedPathId] = React.useState<PathId>("cabinet");
@@ -119,7 +122,7 @@ function App() {
             <small>Delaware County Institute of Science</small>
           </span>
         </button>
-        <nav aria-label="App sections">
+        <nav aria-label="App sections" className="header-utilities">
           {(phase === 'map' || phase === 'orientation') && <a className="ghost-button" href={resumeExperience()}>Continue</a>}
           <button className="ghost-button" onClick={() => setPhase("orientation")}>
             <MapPinned size={18} />
@@ -128,8 +131,9 @@ function App() {
         </nav>
       </header>
 
-      {phase === "choose-path" && <ExperienceHome onBrowse={() => setPhase('map')} onMap={() => setPhase('orientation')} />}
-      {phase === 'experience' && <Experiences route={route} onMap={id=>{setMapSelection(id);setPhase('map');}} />}
+      {phase === "choose-path" && <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} />}
+      {phase === 'collection' && <Collection onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}}/>}
+      {phase === 'experience' && <Experiences route={route} onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}} />}
       {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href={resumeExperience()}>← Resume guide / mystery</a></div>}
       {phase === "orientation" && <FirstFloorMap onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
       {phase === "paths" && (
@@ -172,6 +176,12 @@ function App() {
       {phase === "map" && <MineralHallMap selectedId={mapSelection} onSelect={setMapSelection} onBack={() => setPhase("orientation")} onExplore={() => setPhase("choose-path")} />}
 
 
+      <nav className="museum-nav" aria-label="Museum navigation">
+        <a href="#home" aria-current={phase==='choose-path'?'page':undefined}><Home size={19}/><span>Discover</span></a>
+        <a href={resumeExperience()} aria-current={phase==='experience'?'page':undefined}><BookOpen size={19}/><span>Your guide</span></a>
+        <a href="#map" aria-current={phase==='orientation'||phase==='map'?'page':undefined}><MapPinned size={19}/><span>Map</span></a>
+        <a href="#browse" aria-current={phase==='collection'?'page':undefined}><Eye size={19}/><span>Collection</span></a>
+      </nav>
     </main>
   );
 }
@@ -527,6 +537,7 @@ function MineralHallMap({ onBack, onExplore, selectedId, onSelect }: { onBack: (
   const selectedSpecimens = specimensForDisplay(selected.displayId).filter(record => record.type !== 'exhibit identity');
   function setSelectedId(id: string) {
     onSelect(id);
+    window.location.hash=`map/minerals/${id}`;
     requestAnimationFrame(() => { detail.current?.scrollIntoView({block: 'start'}); detail.current?.focus({preventScroll:true}); });
   }
   React.useEffect(() => { if (selectedId !== 'entry') requestAnimationFrame(() => detail.current?.scrollIntoView({block: 'start'})); }, []);
@@ -585,6 +596,7 @@ function MineralHallMap({ onBack, onExplore, selectedId, onSelect }: { onBack: (
           <button className="text-button back-to-displays" onClick={() => { board.current?.scrollIntoView({block: "start"}); board.current?.querySelector("input")?.focus({preventScroll:true}); }}>Back to map & displays</button>
           <h2>{selected.label}</h2>
           <p>{selected.summary}</p>
+          <p className="experience-note">{selected.id === '4' ? 'Map 4 · Physical cabinet sticker 3. ' : /^\d+$/.test(selected.id) ? `Map ${selected.id} · Guide reference, not a cabinet sticker. ` : 'Unnumbered location. '}{selectedSpecimens.length ? `${selectedSpecimens.length} selected records below — open any photograph for a closer view.` : 'Use the room landmarks to find this location; no object photographs are included in this selection.'}</p>
           {selectedSpecimens.length > 0 && (
             <div className="map-specimens">
               <strong>Discover this display</strong>

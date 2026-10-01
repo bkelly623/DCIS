@@ -19,10 +19,10 @@ with sync_playwright() as p:
   visit('home');check();page.screenshot(path=str(out/f'home-{width}.png'),full_page=True)
   for s in g['stops']:
    visit('guide/'+s['id']);page.get_by_role('heading',name=s['title'],exact=True).wait_for();check()
-   for label in ['Find this specimen','The specimen’s story','The wider hall story',s['deeper']['label'],s['notFound']['label'],'Visiting safely']:
+   for label in ['Find this specimen','I’ve looked — tell me the story','The wider hall story',s['deeper']['label'],s['notFound']['label'],'Visiting safely']:
     page.get_by_text(label,exact=True).click()
    assert page.get_by_text(s['objectStory'],exact=True).is_visible()
-   page.get_by_role('button',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_role('heading',name=s['title'],exact=True).wait_for()
+   page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_role('heading',name=s['title'],exact=True).wait_for()
    page.get_by_role('link',name='Skip this stop',exact=True).click()
    assert page.url.endswith('/'+s['nextStopId'])
   page.get_by_role('heading',name=g['finish']['title'],exact=True).wait_for();page.get_by_role('link',name='Try Hidden Appearance',exact=True).click()
@@ -32,7 +32,7 @@ with sync_playwright() as p:
     visit('mystery/'+node['id']);page.get_by_role('button',name=choice['label'],exact=True).click()
     response=page.get_by_text(choice['response'],exact=True);assert response.is_visible();assert page.url.endswith('/'+node['id'])
     page.reload();assert page.get_by_text(choice['response'],exact=True).is_visible()
-    page.get_by_role('button',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_text(choice['response'],exact=True).wait_for()
+    page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_text(choice['response'],exact=True).wait_for()
     page.get_by_role('button',name='Continue →',exact=True).click();assert page.url.endswith('/'+choice['next']);check();count+=1
   visit('mystery/reveal');page.get_by_role('button',name='UV light',exact=True).click();assert page.locator('.experience-photo img').get_attribute('src').endswith('-uv.webp');page.screenshot(path=str(out/f'reveal-{width}.png'),full_page=True)
   page.get_by_role('button',name='Normal light',exact=True).click();assert page.locator('.experience-photo img').get_attribute('src').endswith('-normal.webp')
@@ -42,7 +42,7 @@ with sync_playwright() as p:
    visit('mystery/takeaway');page.get_by_role('link',name=a['label']+' →',exact=True).click();assert page.url.endswith('/'+a.get('nodeId',a.get('stopId')))
   visit('guide/local');page.get_by_role('button',name='Restart guide',exact=True).click();assert page.url.endswith('/smith');page.get_by_role('link',name='Next stop →',exact=True).click();page.go_back();assert page.url.endswith('/smith')
   page.screenshot(path=str(out/f'guide-{width}.png'),full_page=True)
-  page.evaluate("localStorage.setItem('dcis-experiences-v1',JSON.stringify({guide:'bad',mystery:'__proto__',answers:[],light:'x'}))");visit('home');page.get_by_role('link',name='Choose a guide stop',exact=True).click();page.get_by_role('link',name='Resume guide',exact=True).click();assert page.url.endswith('/smith')
+  page.evaluate("localStorage.setItem('dcis-experiences-v1',JSON.stringify({guide:'bad',mystery:'__proto__',answers:[],light:'x'}))");visit('home');page.get_by_role('link',name='Choose a guide stop →',exact=True).click();page.get_by_role('link',name='Resume guide',exact=True).click();assert page.url.endswith('/smith')
   assert not errors,errors
   results.append({'width':width,'guideStops':len(g['stops']),'choiceResponses':count,'errors':errors,'checks':'finish, reset, map detour/reload, all continuation actions, toggle, browser back, malformed storage, no overflow, images loaded'})
   page.close()
