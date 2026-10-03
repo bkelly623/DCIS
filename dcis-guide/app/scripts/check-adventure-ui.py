@@ -13,7 +13,7 @@ with sync_playwright() as p:
   page.evaluate('window.scrollTo(0,0)');page.screenshot(path=str(out/(name+'.png')),full_page=True)
   page.screenshot(path=str(out/(name+'-viewport.png')),full_page=False)
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),name
- page.goto(url+'/#home');page.get_by_role('link',name='Enter the adventure').click()
+ page.goto(url+'/#home');page.get_by_role('link',name='Try the three-stop adventure').click()
  start=page.get_by_role('button',name='Try from home'); box=start.bounding_box(); assert width!=390 or (box and box['y']+box['height']<780), 'mode action below fold'
  start.click();shot('01-world')
  if width==390:

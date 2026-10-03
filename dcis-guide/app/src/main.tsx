@@ -37,10 +37,11 @@ import { Collection } from "./Collection";
 import { ExperienceHome, Experiences, resumeExperience } from "./Experiences";
 import { FirstFloorMap } from "./FirstFloorMap";
 import { Adventure } from "./Adventure";
+import { Play } from "./Play";
 import "./foundation.css";
 import "./museum.css";
 
-type Phase = "adventure" | "experience" | "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation" | "collection";
+type Phase = "play" | "adventure" | "experience" | "choose-path" | "setup" | "tour" | "recap" | "map" | "paths" | "orientation" | "collection";
 
 type Progress = {
   teamName: string;
@@ -57,7 +58,7 @@ const STORAGE_KEY = "dcis-expedition-progress-v2";
 function App() {
   const [mapSelection, setMapSelection] = React.useState(()=>window.location.hash.startsWith('#map/minerals/')?window.location.hash.split('/')[2]:'entry');
   const [route, setRoute] = React.useState(window.location.hash || '#home');
-  const phaseFromHash = (hash:string): Phase => hash === '#adventure' ? 'adventure' : hash.startsWith('#guide/') || hash.startsWith('#mystery/') ? 'experience' : hash === '#map' ? 'orientation' : hash.startsWith('#map/minerals') ? 'map' : hash === '#browse' ? 'collection' : 'choose-path';
+  const phaseFromHash = (hash:string): Phase => hash === '#play' ? 'play' : hash === '#adventure' ? 'adventure' : hash.startsWith('#guide/') || hash.startsWith('#mystery/') ? 'experience' : hash === '#map' ? 'orientation' : hash.startsWith('#map/minerals') ? 'map' : hash === '#browse' ? 'collection' : 'choose-path';
   const [phase, updatePhase] = React.useState<Phase>(()=>phaseFromHash(window.location.hash));
   const setPhase = (value:Phase) => { window.location.hash = value === 'orientation' ? 'map' : value === 'map' ? `map/minerals/${mapSelection}` : value === 'collection' ? 'browse' : 'home'; updatePhase(value); };
   React.useEffect(()=>{if(route.startsWith('#map/minerals/'))setMapSelection(route.split('/')[2]);},[route]);
@@ -134,9 +135,10 @@ function App() {
 
       {phase === "choose-path" && <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} />}
       {phase === 'adventure' && <Adventure />}
+      {phase === 'play' && <Play />}
       {phase === 'collection' && <Collection onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}}/>}
       {phase === 'experience' && <Experiences route={route} onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}} />}
-      {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href="#adventure">← Resume adventure</a><a href={resumeExperience()}>Resume guide / mystery</a></div>}
+      {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href="#play">← Resume play</a><a href="#adventure">← Resume adventure</a><a href={resumeExperience()}>Resume guide / mystery</a></div>}
       {phase === "orientation" && <FirstFloorMap onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
       {phase === "paths" && (
         <PathPicker
@@ -180,7 +182,7 @@ function App() {
 
       <nav className="museum-nav" aria-label="Museum navigation">
         <a href="#home" aria-current={phase==='choose-path'?'page':undefined}><Home size={19}/><span>Discover</span></a>
-        <a href="#adventure" aria-current={phase==='adventure'?'page':undefined}><BookOpen size={19}/><span>Adventure</span></a>
+        <a href="#play" aria-current={phase==='play'?'page':undefined}><BookOpen size={19}/><span>Play</span></a>
         <a href="#map" aria-current={phase==='orientation'||phase==='map'?'page':undefined}><MapPinned size={19}/><span>Map</span></a>
         <a href="#browse" aria-current={phase==='collection'?'page':undefined}><Eye size={19}/><span>Collection</span></a>
       </nav>
