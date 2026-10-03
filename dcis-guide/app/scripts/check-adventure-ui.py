@@ -13,7 +13,7 @@ with sync_playwright() as p:
   page.evaluate('window.scrollTo(0,0)');page.screenshot(path=str(out/(name+'.png')),full_page=True)
   page.screenshot(path=str(out/(name+'-viewport.png')),full_page=False)
   assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),name
- page.goto(url+'/#home');page.get_by_role('link',name='Try the three-stop adventure').click()
+ page.goto(url+'/#experiences');page.get_by_role('link',name='Try the three-stop adventure').click()
  start=page.get_by_role('button',name='Try from home'); box=start.bounding_box(); assert width!=390 or (box and box['y']+box['height']<780), 'mode action below fold'
  start.click();shot('01-world')
  if width==390:
@@ -43,7 +43,7 @@ with sync_playwright() as p:
  page.get_by_role('button',name='I’m not sure').click()
  page.get_by_role('button',name='Add this discovery').click()
  page.goto(url+'/#map');shot('08-map')
- page.goto(url+'/#home');shot('09-home')
+ page.goto(url+'/#experiences');shot('09-home')
  assert not errors,errors
  print(json.dumps({'errors':errors,'width':width,'pass':['three encounters','map detour + reload','prediction + reveal persistence','personalized ending','completion reload','replay','onsite photo fallback','not sure continuation','page overflow'],'screenshots':len(list(out.glob('*.png')))},indent=2))
  b.close()

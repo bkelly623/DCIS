@@ -112,9 +112,13 @@ try:
             page.get_by_role('button', name='Whole first floor').click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
+            page.locator('summary').click()
+            page.get_by_role('link', name='Other museum experiences', exact=True).click()
             page.get_by_role('button', name='02 / Find your way', exact=False).click()
             page.get_by_role('heading', name='First floor', exact=True).wait_for()
             page.get_by_role('button', name='Back to exploring', exact=True).click()
+            page.locator('summary').click()
+            page.get_by_role('link', name='Other museum experiences', exact=True).click()
             # The guide/mystery replace the retired badge activity and path picker.
             # Preserve equivalent persistence and map-return assertions here;
             # check-experiences-ui.py additionally exhausts every stop and choice.

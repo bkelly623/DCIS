@@ -38,6 +38,7 @@ import { ExperienceHome, Experiences, resumeExperience } from "./Experiences";
 import { FirstFloorMap } from "./FirstFloorMap";
 import { Adventure } from "./Adventure";
 import { Play } from "./Play";
+import { Hunt } from "./Hunt";
 import "./foundation.css";
 import "./museum.css";
 
@@ -125,7 +126,7 @@ function App() {
           </span>
         </button>
         <nav aria-label="App sections" className="header-utilities">
-          {(phase === 'map' || phase === 'orientation') && <a className="ghost-button" href={resumeExperience()}>Continue</a>}
+          {(phase === 'map' || phase === 'orientation') && <a className="ghost-button" href="#hunt">Return to hunt</a>}
           <button className="ghost-button" onClick={() => setPhase("orientation")}>
             <MapPinned size={18} />
             Map
@@ -133,12 +134,12 @@ function App() {
         </nav>
       </header>
 
-      {phase === "choose-path" && <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} />}
+      {phase === "choose-path" && (route === "#experiences" ? <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} /> : <Hunt />)}
       {phase === 'adventure' && <Adventure />}
       {phase === 'play' && <Play />}
       {phase === 'collection' && <Collection onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}}/>}
       {phase === 'experience' && <Experiences route={route} onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}} />}
-      {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href="#play">← Resume play</a><a href="#adventure">← Resume adventure</a><a href={resumeExperience()}>Resume guide / mystery</a></div>}
+      {(phase === 'orientation' || phase === 'map') && <div className="experience-resume"><a href="#hunt">← Return to your hunt</a><a href="#play">← Resume play</a><a href="#adventure">← Resume adventure</a><a href={resumeExperience()}>Resume guide / mystery</a></div>}
       {phase === "orientation" && <FirstFloorMap onBack={() => setPhase("choose-path")} onMinerals={() => setPhase("map")} />}
       {phase === "paths" && (
         <PathPicker
@@ -181,8 +182,7 @@ function App() {
 
 
       <nav className="museum-nav" aria-label="Museum navigation">
-        <a href="#home" aria-current={phase==='choose-path'?'page':undefined}><Home size={19}/><span>Discover</span></a>
-        <a href="#play" aria-current={phase==='play'?'page':undefined}><BookOpen size={19}/><span>Play</span></a>
+        <a href="#hunt" aria-current={phase==='choose-path'?'page':undefined}><Home size={19}/><span>Hunt</span></a>
         <a href="#map" aria-current={phase==='orientation'||phase==='map'?'page':undefined}><MapPinned size={19}/><span>Map</span></a>
         <a href="#browse" aria-current={phase==='collection'?'page':undefined}><Eye size={19}/><span>Collection</span></a>
       </nav>
