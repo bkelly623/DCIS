@@ -22,7 +22,7 @@ with sync_playwright() as p:
    for label in ['Find this specimen','I’ve looked — tell me the story','The wider hall story',s['deeper']['label'],s['notFound']['label'],'Visiting safely']:
     page.get_by_text(label,exact=True).click()
    assert page.get_by_text(s['objectStory'],exact=True).is_visible()
-   page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_role('heading',name=s['title'],exact=True).wait_for()
+   page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='Resume guide / mystery').click();page.get_by_role('heading',name=s['title'],exact=True).wait_for()
    page.get_by_role('link',name='Skip this stop',exact=True).click()
    assert page.url.endswith('/'+s['nextStopId'])
   page.get_by_role('heading',name=g['finish']['title'],exact=True).wait_for();page.get_by_role('link',name='Try Hidden Appearance',exact=True).click()
@@ -32,7 +32,7 @@ with sync_playwright() as p:
     visit('mystery/'+node['id']);page.get_by_role('button',name=choice['label'],exact=True).click()
     response=page.get_by_text(choice['response'],exact=True);assert response.is_visible();assert page.url.endswith('/'+node['id'])
     page.reload();assert page.get_by_text(choice['response'],exact=True).is_visible()
-    page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='← Resume guide / mystery').click();page.get_by_text(choice['response'],exact=True).wait_for()
+    page.get_by_role('navigation',name='Museum navigation').get_by_role('link',name='Map',exact=True).click();page.reload();page.get_by_role('link',name='Resume guide / mystery').click();page.get_by_text(choice['response'],exact=True).wait_for()
     page.get_by_role('button',name='Continue →',exact=True).click();assert page.url.endswith('/'+choice['next']);check();count+=1
   visit('mystery/reveal');page.get_by_role('button',name='UV light',exact=True).click();assert page.locator('.experience-photo img').get_attribute('src').endswith('-uv.webp');page.screenshot(path=str(out/f'reveal-{width}.png'),full_page=True)
   page.get_by_role('button',name='Normal light',exact=True).click();assert page.locator('.experience-photo img').get_attribute('src').endswith('-normal.webp')

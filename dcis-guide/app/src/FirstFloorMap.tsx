@@ -37,7 +37,7 @@ export function FirstFloorMap({onBack,onMinerals}:{onBack:()=>void;onMinerals:()
           <g className="floor-label"><text x="285" y="490">Inner</text><text x="285" y="518">entrance</text><text x="285" y="610">Front</text><text x="285" y="639">entrance</text></g>
         </g>
         <g {...select('amenities')} className={`floor-room floor-amenities ${place==='amenities'?'is-selected':''}`} aria-label="Stairs and visitor bathroom area">
-          <path d={publicFloorShapes.amenities}/><g className="floor-label"><path className="floor-stair" d="M62 563 H108 M62 571 H108 M62 579 H108 M62 587 H108 M62 595 H108 M62 603 H108"/><text x="150" y="588">WC</text><text className="floor-sub" x="120" y="633">Stairs to floor 2</text><text className="floor-sub" x="120" y="657">Visitor bathroom</text></g>
+          <path d={publicFloorShapes.amenities}/><g className="floor-label"><path className="floor-stair" d="M62 563 H108 M62 571 H108 M62 579 H108 M62 587 H108 M62 595 H108 M62 603 H108"/><text className="floor-sub" x="153" y="580">Visitor</text><text className="floor-sub" x="153" y="598">bathroom</text><text className="floor-sub" x="120" y="633">Stairs to floor 2</text><text className="floor-sub" x="120" y="657">Visitor bathroom</text></g>
         </g>
         <g {...select('special')} className={`floor-room floor-special ${place==='special'?'is-selected':''}`} aria-label="Special Exhibit Room">
           <path d={publicFloorShapes.special}/><g className="floor-label"><text x="508" y="610">Special</text><text x="508" y="639">Exhibit Room</text></g>

@@ -125,7 +125,7 @@ try:
             page.get_by_role('button', name='Find on Map 4', exact=True).click()
             assert page.locator('.map-detail h2').inner_text() == '4 Fluorescent'
             page.get_by_role('button', name='Whole first floor').click()
-            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Your guide', exact=True).click()
+            page.get_by_role('link', name='Resume guide / mystery', exact=True).click()
             assert choice.get_attribute('aria-pressed') == 'true'
             assert page.locator('.experience-response').inner_text() == response
             page.reload()
@@ -140,7 +140,7 @@ try:
             page.locator('.experience-location').wait_for()
             title = page.locator('.experience h1').inner_text()
             page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Map', exact=True).click()
-            page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Your guide', exact=True).click()
+            page.get_by_role('link', name='Resume guide / mystery', exact=True).click()
             assert page.locator('.experience h1').inner_text() == title
             page.get_by_role('navigation', name='Museum navigation').get_by_role('link', name='Map', exact=True).click()
             page.get_by_role('button', name='Mineral Hall — open exhibit map', exact=True).click()
