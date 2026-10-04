@@ -39,6 +39,7 @@ import { FirstFloorMap } from "./FirstFloorMap";
 import { Adventure } from "./Adventure";
 import { Play } from "./Play";
 import { Hunt } from "./Hunt";
+const TreeWorld = React.lazy(() => import('./TreeWorld').then(m => ({ default: m.TreeWorld })));
 const Lab = React.lazy(() => import('./Lab').then(m => ({ default: m.Lab })));
 import "./foundation.css";
 import "./museum.css";
@@ -116,6 +117,7 @@ function App() {
     setPhase("choose-path");
   }
 
+  if(route === '#world' || route === '#lab/world') return <React.Suspense fallback={<p role="status">Growing the tree world…</p>}><TreeWorld /></React.Suspense>;
   return (
     <main className="app">
       <header className="topbar">

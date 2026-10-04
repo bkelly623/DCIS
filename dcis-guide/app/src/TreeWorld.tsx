@@ -1,0 +1,65 @@
+import React from 'react';
+import * as THREE from 'three';
+import './tree-world.css';
+
+type Readout={inside:boolean;step:number;won:boolean;near:string;angle:number};
+export function TreeWorld(){
+ const host=React.useRef<HTMLDivElement>(null), input=React.useRef(new Set<string>()), action=React.useRef(()=>{}), restart=React.useRef(()=>{});
+ const [ui,setUI]=React.useState<Readout>({inside:false,step:0,won:false,near:'',angle:0}),[error,setError]=React.useState('');
+ React.useEffect(()=>{
+  const el=host.current!;let renderer:THREE.WebGLRenderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true});}catch{setError('WebGL is unavailable. Try a browser with hardware acceleration.');return;}
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setClearColor('#182c31');renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;el.appendChild(renderer.domElement);
+  const scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#182c31',.023);const camera=new THREE.PerspectiveCamera(66,1,.1,100);camera.position.set(0,1.65,14);
+  const mat=(color:string,extra={})=>new THREE.MeshStandardMaterial({color,roughness:.85,...extra});
+  const bark=mat('#594037'),wood=mat('#996542'),dark=mat('#3c302a'),moss=mat('#526c43'),gold=mat('#dbad60',{metalness:.55,roughness:.3}),glow=mat('#b6ffe3',{emissive:'#62ebbe',emissiveIntensity:2});
+  function mesh(g:THREE.BufferGeometry,m:THREE.Material,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);scene.add(o);return o;}
+  function bar(a:THREE.Vector3,b:THREE.Vector3,r:number,m:THREE.Material){const o=mesh(new THREE.CylinderGeometry(r,r*1.12,a.distanceTo(b),9),m);o.position.copy(a).add(b).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize());return o;}
+  const v=(x:number,y:number,z:number)=>new THREE.Vector3(x,y,z);
+  mesh(new THREE.CylinderGeometry(35,35,.25,64),moss,0,-.2,0);
+  // A walk-through, open-front hollow tree: every rib follows the room wall.
+  for(let i=0;i<44;i++){const a=i/44*Math.PI*2;const x=Math.sin(a)*6,z=Math.cos(a)*6;if(z>4.8&&Math.abs(x)<2.7)continue;mesh(new THREE.CylinderGeometry(.5,.72,11+Math.sin(i*3)*.6,7),i%3?bark:dark,x,5,z);}
+  for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const x=Math.sin(a),z=Math.cos(a);if(z<.75)bar(v(x*5,1,z*5),v(x*9,0,z*9),.6,bark);bar(v(x*5,7,z*5),v(x*11,11,z*11),.75,bark);mesh(new THREE.IcosahedronGeometry(4.2,1),moss,x*10,12,z*10);}
+  const archCurve=new THREE.CatmullRomCurve3([v(-2.3,0,5.5),v(-2.1,3,5.5),v(0,4.8,5.5),v(2.1,3,5.5),v(2.3,0,5.5)]);mesh(new THREE.TubeGeometry(archCurve,32,.3,8,false),wood);
+  for(let z=-5;z<6;z+=.48){const half=Math.sqrt(Math.max(0,34-z*z));mesh(new THREE.BoxGeometry(half*2,.12,.45),wood,0,0,z);}
+  for(let i=0;i<9;i++)mesh(new THREE.CylinderGeometry(.75,.85,.12,7),mat('#a69b77'),Math.sin(i)*.22,.02,7+i*.9);
+  // Curving overhead timber ribs and lanterns, not a sealed cylinder ceiling.
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;const curve=new THREE.CatmullRomCurve3([v(Math.cos(a)*5.6,0,Math.sin(a)*5.6),v(Math.cos(a)*5,4,Math.sin(a)*5),v(0,6.5,0)]);mesh(new THREE.TubeGeometry(curve,24,.17,6,false),wood);}
+  scene.add(new THREE.HemisphereLight('#afcbd3','#583c2c',2));const sun=new THREE.DirectionalLight('#ffd7a0',2.7);sun.position.set(-8,15,10);scene.add(sun);
+  const lamps:THREE.Mesh[]=[];
+  for(const [x,z] of [[-3,3],[3,3],[-3,-2],[3,-2]]){bar(v(x,4.8,z),v(x,3,z),.025,gold);const l=mesh(new THREE.SphereGeometry(.23,12,8),mat('#ffe6a6',{emissive:'#ffb95e',emissiveIntensity:2}),x,2.9,z);lamps.push(l);const light=new THREE.PointLight('#ffc480',10,8,2);light.position.set(x,2.8,z);scene.add(light);}
+  // Windows: luminous circular glass, wooden crossbars, moss-lined sills.
+  for(const side of [-1,1]){const window=mesh(new THREE.CircleGeometry(1.15,32),mat('#a5c6a6',{emissive:'#7ea5a0',emissiveIntensity:.65,side:THREE.DoubleSide}),side*5.5,3,0);window.rotation.y=Math.PI/2;bar(v(side*5.4,1.8,0),v(side*5.4,4.2,0),.075,wood);bar(v(side*5.4,3,-1.2),v(side*5.4,3,1.2),.075,wood);mesh(new THREE.BoxGeometry(.6,.16,2.6),wood,side*5.2,1.8,0);}
+  // Reading nook and botanical workbench.
+  mesh(new THREE.BoxGeometry(1.5,.2,2.6),wood,-4.3,.8,-1.7);for(const z of [-2.6,-.8])bar(v(-4.3,0,z),v(-4.3,.8,z),.12,dark);
+  for(let i=0;i<5;i++)mesh(new THREE.BoxGeometry(.55,.13,.8),mat(['#738776','#a66f54','#beaa74'][i%3]),-4.3,.95+i*.13,-2);
+  for(const x of [-3.8,3.8]){mesh(new THREE.CylinderGeometry(.4,.25,.6,12),mat('#ab7657'),x,.3,3);for(let i=0;i<5;i++)bar(v(x,.5,3),v(x+Math.sin(i)*.6,1.2+Math.cos(i)*.3,3+Math.cos(i)*.5),.075,moss);}
+  // Reflection instrument. The rendered ray obeys r = d - 2(d.n)n.
+  mesh(new THREE.CylinderGeometry(.85,1,.9,16),dark,0,.45,0);mesh(new THREE.CylinderGeometry(1,1,.14,32),gold,0,.98,0);
+  const mirror=mesh(new THREE.BoxGeometry(.12,1.15,1.4),mat('#c2e9e5',{metalness:.75,roughness:.16}),0,1.65,0);
+  // Mirror surface normal starts along +x.
+  const beamMat=new THREE.MeshBasicMaterial({color:'#fff0ac',transparent:true,opacity:.65});bar(v(-4,1.65,0),v(0,1.65,0),.045,beamMat);
+  mesh(new THREE.CylinderGeometry(.35,.4,1.2,12),gold,-4,.6,0);mesh(new THREE.SphereGeometry(.25),glow,-4,1.65,0);
+  const ray=bar(v(0,1.65,0),v(-5,1.65,0),.045,beamMat);
+  const receiver=mesh(new THREE.TorusGeometry(.5,.12,8,24),gold,0,1.65,-5.65);mesh(new THREE.SphereGeometry(.28,12,8),glow,0,1.65,-5.65);
+  const gate=new THREE.Group();scene.add(gate);for(let i=-4;i<=4;i++){const o=new THREE.Mesh(new THREE.CylinderGeometry(.1,.13,3.4,7),wood);o.position.set(i*.9,1.7,-3.6);gate.add(o);}const rail=new THREE.Mesh(new THREE.BoxGeometry(8,.14,.15),gold);rail.position.set(0,2.5,-3.6);gate.add(rail);
+  const seed=mesh(new THREE.IcosahedronGeometry(.3,1),glow,0,1.2,-4.8);mesh(new THREE.CylinderGeometry(.5,.7,.65,12),wood,0,.32,-4.8);
+  const motes:THREE.Mesh[]=[];for(let i=0;i<35;i++)motes.push(mesh(new THREE.SphereGeometry(.025,5,4),glow,Math.sin(i*7)*7,1+(i%7)*.6,Math.cos(i*4)*8));
+  let yaw=0,pitch=0,angle=0,solved=false,won=false,near='',last=performance.now(),frame=0,stamp=0;
+  const send=()=>setUI({inside:camera.position.z<5.5,step:solved?2:camera.position.z<5.5?1:0,won,near,angle:angle*15});
+  const reset=()=>{camera.position.set(0,1.65,14);yaw=0;pitch=0;angle=0;solved=false;won=false;gate.position.y=0;seed.visible=true;input.current.clear();send();};restart.current=reset;
+  action.current=()=>{if(near==='mirror'&&!solved){angle=(angle+1)%7;if(angle===3)solved=true;send();}else if(near==='seed'&&solved){won=true;seed.visible=false;yaw=Math.PI;pitch=0;send();}};
+  const down=(e:KeyboardEvent)=>{if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyQ','KeyE','Space'].includes(e.code)){e.preventDefault();if(e.code==='KeyE'&&!e.repeat)action.current();else input.current.add(e.code);}};
+  const up=(e:KeyboardEvent)=>input.current.delete(e.code);const blur=()=>input.current.clear();window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur);
+  let drag=false,px=0,py=0;const pointerDown=(e:PointerEvent)=>{drag=true;px=e.clientX;py=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);};const pointerMove=(e:PointerEvent)=>{if(!drag)return;yaw-=(e.clientX-px)*.005;pitch=Math.max(-.65,Math.min(.65,pitch-(e.clientY-py)*.004));px=e.clientX;py=e.clientY;};const pointerUp=()=>{drag=false;};renderer.domElement.addEventListener('pointerdown',pointerDown);renderer.domElement.addEventListener('pointermove',pointerMove);renderer.domElement.addEventListener('pointerup',pointerUp);renderer.domElement.addEventListener('pointercancel',pointerUp);
+  const resize=()=>{renderer.setSize(el.clientWidth,el.clientHeight);camera.aspect=el.clientWidth/el.clientHeight;camera.updateProjectionMatrix();};const observer=new ResizeObserver(resize);observer.observe(el);resize();
+  const allowed=(x:number,z:number)=>{if(Math.abs(x)>11||z>17||z< -5.45)return false;const r=Math.hypot(x,z);if(z<5.7&&r>5.45&&!(z>4.8&&Math.abs(x)<1.65))return false;if(z>=5.2&&z<6.9&&Math.abs(x)>1.65)return false;if(!solved&&z< -3.2)return false;if(Math.hypot(x,z)<1.9)return false;if(x< -3.3&&z<.7&&z> -3.4)return false;if(Math.hypot(x,z+4.8)<.65)return false;return true;};
+  const tick=(now:number)=>{const dt=Math.min((now-last)/1000,.2);last=now;const keys=input.current;const move=(keys.has('KeyW')||keys.has('ArrowUp')?1:0)-(keys.has('KeyS')||keys.has('ArrowDown')?1:0);const strafe=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0);yaw+=((keys.has('ArrowLeft')?1:0)-(keys.has('ArrowRight')?1:0))*dt*1.5;const speed=dt*3/Math.max(1,Math.hypot(move,strafe));const dx=(-Math.sin(yaw)*move+Math.cos(yaw)*strafe)*speed,dz=(-Math.cos(yaw)*move-Math.sin(yaw)*strafe)*speed;const steps=Math.max(1,Math.ceil(Math.max(Math.abs(dx),Math.abs(dz))/.08));for(let i=0;i<steps;i++){if(allowed(camera.position.x+dx/steps,camera.position.z))camera.position.x+=dx/steps;if(allowed(camera.position.x,camera.position.z+dz/steps))camera.position.z+=dz/steps;}camera.position.y=1.65+(move||strafe?Math.sin(now*.009)*.035:0);camera.rotation.set(pitch,yaw,0,'YXZ');
+   mirror.rotation.y=-angle*Math.PI/12;const normal=v(Math.cos(-angle*Math.PI/12),0,-Math.sin(-angle*Math.PI/12));const direction=v(1,0,0).reflect(normal);ray.position.copy(direction).multiplyScalar(2.65).add(v(0,1.65,0));ray.quaternion.setFromUnitVectors(v(0,1,0),direction);ray.scale.y=5.3/5;
+   gate.position.y=THREE.MathUtils.damp(gate.position.y,solved?3.8:0,2,dt);receiver.rotation.z=solved?now*.001:0;seed.rotation.y=now*.001;seed.position.y=1.2+Math.sin(now*.002)*.1;motes.forEach((o,i)=>{o.position.y+=Math.sin(now*.001+i)*dt*.13;});lamps.forEach((o,i)=>o.position.x+=Math.sin(now*.001+i)*dt*.025);
+   near=Math.hypot(camera.position.x,camera.position.z)<2.6?'mirror':Math.hypot(camera.position.x,camera.position.z+4.8)<1.65?'seed':'';if(now-stamp>150){send();stamp=now;el.dataset.player=JSON.stringify({x:camera.position.x,z:camera.position.z,yaw,solved,won,angle});}renderer.render(scene,camera);frame=requestAnimationFrame(tick);};frame=requestAnimationFrame(tick);
+  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);input.current.clear();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();}});renderer.dispose();renderer.domElement.remove();};
+ },[]);
+ const hold=(key:string)=>({onPointerDown:(e:React.PointerEvent<HTMLButtonElement>)=>{e.currentTarget.setPointerCapture(e.pointerId);input.current.add(key);},onPointerUp:()=>input.current.delete(key),onPointerCancel:()=>input.current.delete(key),onLostPointerCapture:()=>input.current.delete(key)});
+ return <section className="tree-world" aria-label="Playable tree world"><div ref={host} className="tree-canvas" aria-label="3D first-person tree world"/><header className="tree-header"><div><small>A FANTASY SCIENCE PLAYGROUND</small><h1>The Lantern Tree</h1></div><nav><a href="#lab/ar">Character & AR lab ↗</a><a href="#hunt">Museum hunt</a><button onClick={()=>restart.current()}>Restart</button></nav></header><div className="tree-quest" aria-live="polite"><span>{ui.won?'COMPLETE':`0${ui.step+1} / 03`}</span><strong>{ui.won?'A little light. A living forest.':ui.step===0?'Follow the stones into the tree':ui.step===1?'Turn the mirror. Wake the seed.':'The gate is rising. Collect the seed!'}</strong><p>{ui.won?'You restored the lantern seed. Restart to play again.':ui.step===0?'Walk through the arch. Your adventure is inside.':ui.step===1?'Find the brass instrument. Aim its reflected beam at the ring behind the gate.':'Walk around the instrument and through the open gate.'}</p></div>{error&&<p className="tree-error" role="alert">{error}</p>}<span className="tree-reticle">·</span><div className="tree-bottom"><div className="tree-context">{ui.near==='mirror'&&!ui.won?<><span>Mirror angle · {ui.angle}°</span><button disabled={ui.step===2} onClick={e=>{e.currentTarget.blur();action.current();}}>{ui.step===2?'Beam aligned ✓':'Turn mirror +15° · E'}</button><small>Reflection: incoming and outgoing angles match, measured from the normal. The seed and gate are fantasy.</small></>:ui.near==='seed'&&ui.step===2&&!ui.won?<button onClick={e=>{e.currentTarget.blur();action.current();}}>Collect lantern seed · E</button>:<span>{ui.won?'Lantern seed recovered ✦':'WASD to walk · arrows to walk / turn · drag to look'}</span>}</div><div className="tree-controls"><div className="tree-pad"><button {...hold('KeyW')} aria-label="Walk forward">↑</button><div><button {...hold('KeyA')} aria-label="Step left">←</button><button {...hold('KeyS')} aria-label="Walk backward">↓</button><button {...hold('KeyD')} aria-label="Step right">→</button></div></div><div className="tree-turn"><button {...hold('ArrowLeft')} aria-label="Turn left">↶</button><button {...hold('ArrowRight')} aria-label="Turn right">↷</button><small>LOOK</small></div></div></div></section>;
+}
