@@ -39,6 +39,7 @@ import { FirstFloorMap } from "./FirstFloorMap";
 import { Adventure } from "./Adventure";
 import { Play } from "./Play";
 import { Hunt } from "./Hunt";
+const Lab = React.lazy(() => import('./Lab').then(m => ({ default: m.Lab })));
 import "./foundation.css";
 import "./museum.css";
 
@@ -134,7 +135,7 @@ function App() {
         </nav>
       </header>
 
-      {phase === "choose-path" && (route === "#experiences" ? <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} /> : <Hunt />)}
+      {phase === "choose-path" && (route.startsWith('#lab') ? <React.Suspense fallback={<p role="status">Loading experiments…</p>}><Lab route={route}/></React.Suspense> : route === "#experiences" ? <ExperienceHome onBrowse={() => setPhase('collection')} onMap={() => setPhase('orientation')} /> : <Hunt />)}
       {phase === 'adventure' && <Adventure />}
       {phase === 'play' && <Play />}
       {phase === 'collection' && <Collection onMap={id=>{setMapSelection(id);window.location.hash=`map/minerals/${id}`;}}/>}
