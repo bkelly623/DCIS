@@ -5,7 +5,7 @@ Creator/license: https://quaternius.com/packs/ultimatemodularcharacters.html
 Independent listing: https://poly.pizza/m/5EGWBMpuXq (Public Domain CC0)
 GLB distribution: https://cdn.cinevva.com/assets/packs/quaternius/ultimate-modular-men/Adventurer.glb
 License: https://creativecommons.org/publicdomain/zero/1.0/
-The local GLB is artist-authored human geometry, rig and clothing, not a generated likeness. App role presets recolor the same outfit; skin and hair controls recolor named materials. The generic model is not a DCIS founder.
+Rebuild: Quaternius Ultimate Modular Characters, men and women Adventurer and Worker bases (CC0); distribution https://cdn.cinevva.com/assets/packs/quaternius/ultimate-modular-men/Worker.glb and https://cdn.cinevva.com/assets/packs/quaternius/ultimate-modular-women/Adventurer.glb and https://cdn.cinevva.com/assets/packs/quaternius/ultimate-modular-women/Worker.glb . Local trail/field variants preserve artist-authored distinct bodies, clothes, equipment and rigged Idle/Interact/Wave clips. Non-visitor animation references removed; original binary data retained. An original schematic crystal was added (CC0), not a museum specimen reproduction. Skin and sample illumination use runtime material edits. Generic models are not DCIS founders.
 No personal photos are collected or processed. Photo generation and founder reconstruction are unavailable.
 Current AR modes are webxr and quick-look ONLY. Scene Viewer is omitted to avoid reverting material customization. Quick Look generates USDZ from the current scene; animation support differs by native viewer. Download exports the customized scene as GLB. Physical-device AR remains unverified. Model geometry has not been calibrated to an individual's height.
 
